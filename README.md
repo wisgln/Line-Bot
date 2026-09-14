@@ -25,25 +25,29 @@
 
 ## 專案結構
 
+## 專案結構
+
+```
 fuxing-linebot/
-├── app.py # 主入口，webhook 路由與事件註冊
+├── app.py                  # 主入口，webhook 路由與事件註冊
 ├── config/
-│ └── settings.py # 環境變數集中管理
+│   └── settings.py         # 環境變數集中管理
 ├── handlers/
-│ ├── message_handler.py # 文字訊息處理
-│ ├── location_handler.py # 定位訊息處理
-│ └── postback_handler.py # postback 事件處理
-├── modules/ # 各功能模組（依負責人分工）
-│ ├── attraction/
-│ ├── location/
-│ ├── culture/
-│ ├── ai_service/
-│ ├── weather/
-│ └── merchant/
-├── data/ # JSON 資料（景點、文化、商家、FAQ）
-├── templates/flex/ # Flex Message 樣板
-├── .env.example # 環境變數範本（不含實際金鑰）
+│   ├── message_handler.py  # 文字訊息處理
+│   ├── location_handler.py # 定位訊息處理
+│   └── postback_handler.py # postback 事件處理
+├── modules/                # 各功能模組（依負責人分工）
+│   ├── attraction/
+│   ├── location/
+│   ├── culture/
+│   ├── ai_service/
+│   ├── weather/
+│   └── merchant/
+├── data/                    # JSON 資料（景點、文化、商家、FAQ）
+├── templates/flex/          # Flex Message 樣板
+├── .env.example              # 環境變數範本（不含實際金鑰）
 └── .gitignore
+```
 
 
 ---
