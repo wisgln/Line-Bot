@@ -118,13 +118,13 @@ git push
 ## 環境變數設定
 
 複製 `.env.example` 為 `.env`，並填入以下變數：
-
+```
 CHANNEL_ACCESS_TOKEN=
 CHANNEL_SECRET=
 WEATHER_API_KEY=
 GOOGLE_MAPS_API_KEY=
 AI_API_KEY=
-
+```
 
 `.env` 已加入 `.gitignore`，不會被上傳，請勿把金鑰直接寫死在程式碼裡。
 
