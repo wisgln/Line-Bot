@@ -49,7 +49,7 @@ def handle_message(event):
 
 @line_handler.add(PostbackEvent)
 def handle_postback(event):
-    handle_postback_event(event)
+    handle_postback_event(event, configuration)
 
 
 @line_handler.add(MessageEvent, message=LocationMessageContent)
