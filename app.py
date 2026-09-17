@@ -7,12 +7,14 @@ from linebot.v3.webhooks import (
     MessageEvent,
     FollowEvent,
     PostbackEvent,
-    TextMessageContent
+    TextMessageContent,
+    LocationMessageContent
 )
 
 from config.settings import LINE_CHANNEL_SECRET, LINE_CHANNEL_ACCESS_TOKEN
 from handlers.message_handler import handle_text_message
 from handlers.postback_handler import handle_postback_event
+from handlers.location_handler import handle_location_message
 
 app = Flask(__name__)
 
@@ -47,7 +49,12 @@ def handle_message(event):
 
 @line_handler.add(PostbackEvent)
 def handle_postback(event):
-    handle_postback_event(event)
+    handle_postback_event(event, configuration)
+
+
+@line_handler.add(MessageEvent, message=LocationMessageContent)
+def handle_location(event):
+    handle_location_message(event, configuration)
 
 
 if __name__ == "__main__":
