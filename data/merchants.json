@@ -37,10 +37,24 @@
     "currency": "TWD",
     "price_note": "公開線上菜單參考價格；500元合菜的白飯另計。實際價格與供餐狀態請向店家確認。",
     "opening_hours": "星期一至星期三 09:00–17:00；星期四休息；星期五 09:00–17:00；星期六 11:00–19:00；星期日 09:00–19:00。",
-    "opening_hours_note": "依使用者提供的 Google Maps 截圖整理。截圖提醒國慶日及補假營業時間可能不同；假日或臨時異動請查看 Google Maps 或向店家確認。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
     "opening_hours_source": "使用者提供的 Google Maps 店家營業時間截圖",
     "opening_hours_checked_on": "2026-10-08",
     "source_url": "https://www.menupapa.com/menu/15941",
     "source_checked_on": "2026-10-08"
+  },
+  {
+    "id": "merchant_002",
+    "name": "角板山老店家小吃",
+    "category": "餐廳",
+    "tags": ["原住民風味", "客家料理", "山產"],
+    "address": "桃園市復興區中正路7號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路7號角板山老店家小吃",
+    "description": "結合原住民與客家風味，提供山豬肉、段木菇、馬告雞湯等料理，可體驗復興區地方食材特色。",
+    "price_items": [],
+    "currency": "TWD",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "information_source_url": "https://www.fuxing.tycg.gov.tw/News_Content.aspx?n=7156&s=680666",
+    "information_checked_on": "2026-10-08"
   }
 ]
