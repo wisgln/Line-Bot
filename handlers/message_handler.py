@@ -9,6 +9,17 @@ from linebot.v3.messaging import (
 )
 
 
+def get_ai_reply(text):
+    # 5 號的 FAQ / 天氣模組。import 放在函式裡面，萬一它載入失敗，
+    # 只有這個功能壞掉，不會讓整個 Bot 一起壞掉。
+    try:
+        from modules.ai_service import get_reply
+        return get_reply(text)
+    except Exception as e:
+        print(f'get_reply error: {e}')
+        return "系統暫時無法回答，請稍後再試一次。"
+
+
 def handle_text_message(event, configuration):
     text = event.message.text
 
@@ -45,19 +56,15 @@ def handle_text_message(event, configuration):
 
         elif text == '景點導覽':
             reply_text = "景點導覽功能準備中"
-            # TODO: 2 號接手，改成呼叫 modules/attraction 回傳景點 Flex Message
+            # TODO: 2 號接手，改成呼叫 modules/attraction
 
         elif text == '泰雅文化':
             reply_text = "泰雅文化介紹準備中"
             # TODO: 4 號接手，改成呼叫 modules/culture
 
-        elif text == 'AI 問答':
-            reply_text = "想問什麼都可以直接打字問我喔！"
-            # TODO: 5 號接手，改成呼叫 modules/ai_service
-
         else:
-            # 尚未定義的文字，先 echo 回去，確認串接正常
-            reply_text = text
+            # 包含選單的「AI 問答」，以及所有其他文字（FAQ、天氣問答）
+            reply_text = get_ai_reply(text)
 
         line_bot_api.reply_message(
             ReplyMessageRequest(
