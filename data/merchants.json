@@ -51,9 +51,38 @@
     "address": "桃園市復興區中正路7號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路7號角板山老店家小吃",
     "description": "結合原住民與客家風味，提供山豬肉、段木菇、馬告雞湯等料理，可體驗復興區地方食材特色。",
-    "price_items": [],
+    "price_items": [
+      {
+        "name": "魯肉飯（小）",
+        "price": 30,
+        "unit": "碗"
+      },
+      {
+        "name": "香拌半天花",
+        "price": 240,
+        "unit": "份"
+      },
+      {
+        "name": "鮮炒椴木菇",
+        "price": 230,
+        "unit": "份"
+      },
+      {
+        "name": "蔥爆山豬肉",
+        "price": 230,
+        "unit": "份"
+      },
+      {
+        "name": "鹽酥雙菇",
+        "price": 150,
+        "unit": "份"
+      }
+    ],
     "currency": "TWD",
+    "price_note": "以上為食記記載的歷史參考價格，來源文章最後更新於2025-08-14，非即時報價。實際價格、份量與供餐狀態以店家公告為準。",
     "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://taotaoko.tw/laodianjia/",
+    "source_checked_on": "2026-10-09",
     "information_source_url": "https://www.fuxing.tycg.gov.tw/News_Content.aspx?n=7156&s=680666",
     "information_checked_on": "2026-10-08"
   }
