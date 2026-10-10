@@ -1,4 +1,4 @@
-"""查詢本機商家資料，回傳文字供 LINE 整合使用。"""
+"""查詢本機餐廳與民宿資料，回傳文字供 LINE 整合使用。"""
 
 import json
 import unicodedata
@@ -99,7 +99,9 @@ def load_merchants(data_path=None):
 
 
 def format_merchant(merchant):
-    """顯示商家特色、參考價格、地圖與價格來源。"""
+    """依商家類型顯示特色、參考價格、地圖與來源。"""
+    is_lodging = merchant["category"] == "民宿"
+
     lines = [
         merchant["name"],
         f"類型：{merchant['category']}",
@@ -112,7 +114,17 @@ def format_merchant(merchant):
     prices = merchant.get("price_items", [])
     if prices:
         currency = merchant.get("currency") or "TWD"
-        lines.append(f"\n參考價格（{currency}，非每人餐費）：")
+
+        if is_lodging:
+            lines.append(
+                f"\n住宿參考價格（{currency}，"
+                "計價單位請見各房型）："
+            )
+        else:
+            lines.append(
+                f"\n參考價格（{currency}，"
+                "計價單位請見各品項）："
+            )
 
         for item in prices[:5]:
             lines.append(
@@ -120,36 +132,56 @@ def format_merchant(merchant):
                 f"{item['price']} 元／{item['unit']}"
             )
 
-        if merchant.get("price_note"):
-            lines.append(merchant["price_note"])
+        if len(prices) > 5:
+            lines.append("以上列出前 5 項，其他價格請查看來源。")
 
-        if merchant.get("source_checked_on"):
-            lines.append(
-                "價格來源查詢日期："
-                + merchant["source_checked_on"]
-            )
+    if merchant.get("price_note"):
+        lines.append(f"\n價格說明：{merchant['price_note']}")
+
+    if merchant.get("source_checked_on"):
+        lines.append(
+            "價格來源查詢日期："
+            + merchant["source_checked_on"]
+        )
 
     maps_url = merchant.get("maps_url")
     if maps_url:
+        if is_lodging:
+            maps_label = "📍 查看住宿位置與導航（Google Maps）："
+        else:
+            maps_label = "📍 查看營業時間與導航（Google Maps）："
+
         lines.append(
-            "\n📍 查看營業時間與導航（Google Maps）：\n"
+            f"\n{maps_label}\n"
             + quote(maps_url, safe=":/?=&%")
         )
 
-    source_url = merchant.get("source_url")
+        source_url = merchant.get("source_url")
     if source_url:
+        if is_lodging:
+            source_label = "🏡 民宿官網｜房型、價格與訂房資訊："
+        else:
+            source_label = "📋 查看餐點與價格來源："
+
         lines.append(
-            "\n📋 查看餐點與價格來源：\n"
+            f"\n{source_label}\n"
             + quote(source_url, safe=":/?=&%")
         )
 
-    lines.append("\n營業時間與價格以店家最新公告為準。")
+    if is_lodging:
+        lines.append(
+            "\n房價依入住日期、房型及方案而異。"
+            "訂房前請向業者確認最終價格與空房，"
+            "以上資訊不代表已完成預訂。"
+        )
+    else:
+        lines.append("\n營業時間與價格以店家最新公告為準。")
 
     return "\n".join(lines)
 
 
 def get_merchant_reply(text="", *, data_path=None):
-    """回傳商家資訊，不呼叫 LINE API，也不判定即時營業狀態。"""
+    """回傳商家資訊，不判定即時營業狀態或住宿空房。"""
     if not isinstance(text, str):
         raise TypeError("輸入必須為字串")
 
@@ -213,7 +245,10 @@ def get_merchant_reply(text="", *, data_path=None):
             )
 
         if len(matches) > 10:
-            lines.append("目前只顯示前 10 筆。")
+            lines.append(
+                "目前只顯示前 10 筆，"
+                "可輸入「餐廳」或「民宿」縮小範圍。"
+            )
 
         lines.append("請輸入店家名稱查看詳細資訊。")
         return "\n".join(lines)

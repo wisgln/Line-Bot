@@ -196,4 +196,80 @@
     "source_url": "https://tiffanylin66.pixnet.net/blog/posts/3051025648",
     "source_checked_on": "2026-10-09"
   }
+,
+  {
+    "id": "merchant_011",
+    "name": "雲莊渡假山莊",
+    "category": "民宿",
+    "tags": ["拉拉山", "雙人房", "景觀住宿"],
+    "address": "桃園市復興區華陵村11鄰巴陵192-6號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=雲莊渡假山莊桃園市復興區",
+    "description": "提供面山景觀雙人套房，設有一張雙人床及衛浴，房價含早餐。山坡地住宿動線有樓梯，有無障礙需求請先向業者確認。",
+    "price_items": [
+      {
+        "name": "景觀雙人房（平日）",
+        "price": 2200,
+        "unit": "房／晚"
+      },
+      {
+        "name": "景觀雙人房（假日）",
+        "price": 2800,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "官網雙人房參考價格，含早餐。平日為週日至週四及補班日；假日為週五、週六、國定假日及補假日。春節依官網定價計費。實際入住價格、加人費用與空房請向業者確認。",
+    "source_url": "https://www.lalasun.tw/in_room08.html",
+    "source_checked_on": "2026-10-10"
+  },
+  {
+    "id": "merchant_012",
+    "name": "拉拉山達觀農場",
+    "category": "民宿",
+    "tags": ["拉拉山", "上巴陵", "雙人房"],
+    "address": "桃園市復興區上巴陵神木路189號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=拉拉山達觀農場桃園市復興區",
+    "description": "提供二人套房及多人住宿房型；以下列出二人套房單床房型的參考價格。",
+    "price_items": [
+      {
+        "name": "二人套房單床（平日）",
+        "price": 2100,
+        "unit": "房／晚"
+      },
+      {
+        "name": "二人套房單床（假日）",
+        "price": 2600,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "官網二人套房單床房型參考價格，不是每人價格。平假日認定、特殊節日、餐食方案及實際入住價格與空房，請向業者確認。",
+    "source_url": "https://www.dkhotel.com.tw/room.html",
+    "source_checked_on": "2026-10-10"
+  },
+  {
+    "id": "merchant_013",
+    "name": "楓墅農莊",
+    "category": "民宿",
+    "tags": ["拉拉山", "景觀房", "雙人房"],
+    "address": "桃園市復興區中心路145-5號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=楓墅農莊桃園市復興區",
+    "description": "提供雙人景觀房，房型頁列有景觀窗及獨立衛浴，住宿附早餐。",
+    "price_items": [
+      {
+        "name": "雙人景觀房（平日）",
+        "price": 3300,
+        "unit": "房／晚"
+      },
+      {
+        "name": "雙人景觀房（假日）",
+        "price": 4300,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "依官網雙人景觀房頁面整理，含早餐。不同樓層與房型價格不同，櫻花季及特殊節日另有收費規則；實際房型、入住價格與空房請向業者確認。",
+    "source_url": "https://maple-lodge.okgo.tw/roomcontent.html?rid=1170",
+    "source_checked_on": "2026-10-10"
+  }
 ]
