@@ -1,20 +1,20 @@
-"""提供 FAQ、天氣、商家與緊急聯絡資訊的統一入口。"""
+"""提供 FAQ、天氣、商家、緊急聯絡與交通資訊的統一入口。"""
 
 import logging
 
 from .emergency import get_emergency_reply
 from .faq import find_answer, load_faq
 from .intent import detect_intent, normalize
+from .traffic import get_traffic_reply
 
 logger = logging.getLogger(__name__)
 
 WELCOME = (
     "你好！目前提供系統使用 FAQ、桃園市復興區天氣預報、"
-    "在地商家查詢與緊急聯絡資訊。"
+    "在地商家查詢、緊急聯絡與交通資訊。"
     "可以問我：需要下載 App 嗎？如何分享位置？"
     "復興區天氣如何？推薦餐廳。"
-    "也可以輸入店家名稱查看特色、參考價格與地圖，"
-    "或輸入「緊急聯絡」查看求助電話。"
+    "也可以輸入店家名稱、緊急聯絡、怎麼去角板山。"
 )
 
 FALLBACK = (
@@ -26,10 +26,6 @@ PENDING = {
     "opening_hours": (
         "目前尚未接入景點營業時間資料，無法確認開放時間；"
         "出發前請查閱該景點官方公告。"
-    ),
-    "traffic": (
-        "交通服務尚未串接，目前無法確認班次或即時路況；"
-        "出發前請查閱交通主管機關或業者公告。"
     ),
     "merchant": (
         "目前提供商家資料查詢，尚未提供優惠券服務。"
@@ -49,9 +45,9 @@ PENDING = {
 def get_reply(text: str, *, faq_path=None) -> str:
     """回傳回答文字，由呼叫端負責傳送到 LINE。
 
-    FAQ、商家與緊急聯絡查詢讀取本機 JSON。
+    FAQ、商家、緊急聯絡與交通資料讀取本機 JSON。
     天氣查詢需要 WEATHER_API_KEY。
-    本系統不會代為報案。
+    本系統不會代為報案，也不提供即時交通資訊。
     """
     query = normalize(text)
 
@@ -68,10 +64,13 @@ def get_reply(text: str, *, faq_path=None) -> str:
     }:
         return WELCOME
 
-    # 緊急資訊優先，避免被天氣、店名或 FAQ 攔截。
     emergency_reply = get_emergency_reply(text)
     if emergency_reply is not None:
         return emergency_reply
+
+    traffic_reply = get_traffic_reply(text)
+    if traffic_reply is not None:
+        return traffic_reply
 
     try:
         answer = find_answer(text, load_faq(faq_path))
@@ -89,12 +88,15 @@ def get_reply(text: str, *, faq_path=None) -> str:
 
         return get_weather_reply()
 
+    # 保留舊 intent 的交通判斷，統一轉到交通模組。
+    if intent == "traffic":
+        return get_traffic_reply("交通")
+
     from modules.merchant.merchant_service import (
         get_merchant_reply,
         load_merchants,
     )
 
-    # 先比對店名，避免店名中的「泰雅」被當成文化問題。
     try:
         merchants = load_merchants()
     except (OSError, ValueError):
