@@ -1,4 +1,4 @@
-"""提供 FAQ 與復興區天氣查詢的統一入口。"""
+"""提供 FAQ、復興區天氣與商家查詢的統一入口。"""
 
 import logging
 
@@ -8,8 +8,10 @@ from .intent import detect_intent, normalize
 logger = logging.getLogger(__name__)
 
 WELCOME = (
-    "你好！目前提供系統使用 FAQ 與桃園市復興區天氣預報。"
-    "可以問我：需要下載 App 嗎？如何分享位置？復興區天氣如何？"
+    "你好！目前提供系統使用 FAQ、桃園市復興區天氣預報與在地商家查詢。"
+    "可以問我：需要下載 App 嗎？如何分享位置？"
+    "復興區天氣如何？推薦餐廳。"
+    "也可以輸入店家名稱查看特色、參考價格與地圖。"
 )
 
 FALLBACK = (
@@ -18,18 +20,34 @@ FALLBACK = (
 )
 
 PENDING = {
-    "opening_hours": "目前尚未接入景點營業時間資料，無法確認開放時間；出發前請查閱該景點官方公告。",
-    "traffic": "交通服務尚未串接，目前無法確認班次或即時路況；出發前請查閱交通主管機關或業者公告。",
-    "merchant": "商家資料尚未接入，目前無法提供經確認的餐廳、民宿或優惠資訊。",
-    "attraction": "FAQ 模組尚未接入景點資料；景點導覽與附近推薦需由對應模組整合後提供。",
-    "culture": "FAQ 模組尚未接入文化資料；泰雅文化內容需由文化模組整合後提供。",
+    "opening_hours": (
+        "目前尚未接入景點營業時間資料，無法確認開放時間；"
+        "出發前請查閱該景點官方公告。"
+    ),
+    "traffic": (
+        "交通服務尚未串接，目前無法確認班次或即時路況；"
+        "出發前請查閱交通主管機關或業者公告。"
+    ),
+    "merchant": (
+        "目前提供商家資料查詢，尚未提供優惠券服務。"
+        "可輸入「餐廳」「民宿」或店家名稱查詢。"
+    ),
+    "attraction": (
+        "FAQ 模組尚未接入景點資料；"
+        "景點導覽與附近推薦需由對應模組整合後提供。"
+    ),
+    "culture": (
+        "FAQ 模組尚未接入文化資料；"
+        "泰雅文化內容需由文化模組整合後提供。"
+    ),
 }
 
 
 def get_reply(text: str, *, faq_path=None) -> str:
     """回傳回答文字，由呼叫端負責傳送到 LINE。
 
-    FAQ 不需要 API 授權碼；天氣查詢需要 WEATHER_API_KEY。
+    FAQ 與商家查詢讀取本機 JSON。
+    天氣查詢需要 WEATHER_API_KEY。
     faq_path 可供測試或指定其他 FAQ 資料使用。
     """
     query = normalize(text)
@@ -47,6 +65,7 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if len(text) > 2000:
         return "問題太長了，請縮短至 2000 字以內，並一次問一個問題。"
 
+    # 先處理系統 FAQ。
     try:
         answer = find_answer(text, load_faq(faq_path))
     except (OSError, ValueError):
@@ -59,9 +78,50 @@ def get_reply(text: str, *, faq_path=None) -> str:
     intent = detect_intent(text)
 
     if intent == "weather":
-        # 只有查詢天氣時才載入，讓 FAQ 可以獨立使用。
         from modules.weather.weather_service import get_weather_reply
 
         return get_weather_reply()
+
+    from modules.merchant.merchant_service import (
+        get_merchant_reply,
+        load_merchants,
+    )
+
+    # 先比對店名，避免店名中的「泰雅」被當成文化問題。
+    try:
+        merchants = load_merchants()
+    except (OSError, ValueError):
+        logger.exception("Unable to load merchant data")
+        merchants = []
+
+    matched_names = []
+    for merchant in merchants:
+        name = normalize(merchant["name"])
+        if name in query or (len(query) >= 2 and query in name):
+            matched_names.append(merchant["name"])
+
+    if len(matched_names) == 1:
+        return get_merchant_reply(matched_names[0])
+
+    if len(matched_names) > 1:
+        lines = ["找到多間符合的商家，請輸入完整店名："]
+        lines.extend(f"・{name}" for name in matched_names[:10])
+        return "\n".join(lines)
+
+    # 優惠券尚未實作，避免回傳餐廳資料冒充優惠資訊。
+    if "優惠券" in query:
+        return PENDING["merchant"]
+
+    # 將日常問法轉成商家模組支援的分類。
+    # 「餐廳營業時間」也會回傳商家資料及地圖連結，
+    # 不判斷店家現在是否營業。
+    if any(word in query for word in ("餐廳", "美食")):
+        return get_merchant_reply("餐廳")
+
+    if any(word in query for word in ("民宿", "住宿")):
+        return get_merchant_reply("民宿")
+
+    if "商家" in query:
+        return get_merchant_reply("商家")
 
     return PENDING.get(intent, FALLBACK)

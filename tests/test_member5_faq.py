@@ -28,17 +28,14 @@ class FAQTests(unittest.TestCase):
 
     def test_welcome(self):
         for text in ("", "  ", "AI 問答", "使用說明"):
-            self.assertEqual(get_reply(text), WELCOME)
+            with self.subTest(text=text):
+                self.assertEqual(get_reply(text), WELCOME)
 
     def test_unknown(self):
         self.assertEqual(get_reply("幫我買股票"), FALLBACK)
 
     def test_pending_services(self):
-        for question in (
-            "天空步道營業時間",
-            "公車班次",
-            "推薦餐廳",
-        ):
+        for question in ("天空步道營業時間", "公車班次"):
             with self.subTest(question=question):
                 self.assertIn("目前", get_reply(question))
 
@@ -81,30 +78,36 @@ class FAQTests(unittest.TestCase):
     def test_invalid_data(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "faq.json"
+
             for data in ("{", "{}", "[]", '[{"id": "a"}]'):
-                path.write_text(data, encoding="utf-8")
-                with self.assertLogs(
-                    "modules.ai_service.ai_service",
-                    level="ERROR",
-                ):
-                    self.assertIn(
-                        "暫時無法讀取",
-                        get_reply("問題", faq_path=path),
-                    )
+                with self.subTest(data=data):
+                    path.write_text(data, encoding="utf-8")
+
+                    with self.assertLogs(
+                        "modules.ai_service.ai_service",
+                        level="ERROR",
+                    ):
+                        self.assertIn(
+                            "暫時無法讀取",
+                            get_reply("問題", faq_path=path),
+                        )
 
     def test_duplicate_ids(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "faq.json"
             item = load_faq()[0]
+
             path.write_text(
                 json.dumps([item, item]),
                 encoding="utf-8",
             )
+
             with self.assertRaises(ValueError):
                 load_faq(path)
 
     def test_independent_of_working_directory(self):
         previous = Path.cwd()
+
         with tempfile.TemporaryDirectory() as folder:
             try:
                 os.chdir(folder)
@@ -128,6 +131,7 @@ class FAQTests(unittest.TestCase):
                 "answer": "B",
             },
         ]
+
         self.assertIsNone(find_answer("測試看看", entries))
 
     def test_specific_intent(self):
@@ -142,6 +146,49 @@ class FAQTests(unittest.TestCase):
     def test_input_type(self):
         with self.assertRaises(TypeError):
             get_reply(None)
+
+    def test_merchant_category_routing(self):
+        with patch(
+            "modules.merchant.merchant_service.load_merchants",
+            return_value=[],
+        ), patch(
+            "modules.merchant.merchant_service.get_merchant_reply",
+            return_value="模擬商家回覆",
+        ) as mock_reply:
+            for question in ("推薦餐廳", "餐廳營業時間"):
+                with self.subTest(question=question):
+                    mock_reply.reset_mock()
+
+                    self.assertEqual(
+                        get_reply(question),
+                        "模擬商家回覆",
+                    )
+                    mock_reply.assert_called_once_with("餐廳")
+
+    def test_merchant_name_routing(self):
+        merchants = [{"name": "泰雅小棧特色料理"}]
+
+        with patch(
+            "modules.merchant.merchant_service.load_merchants",
+            return_value=merchants,
+        ), patch(
+            "modules.merchant.merchant_service.get_merchant_reply",
+            return_value="模擬店家資訊",
+        ) as mock_reply:
+            for question in (
+                "泰雅小棧特色料理",
+                "泰雅小棧特色料理營業時間",
+            ):
+                with self.subTest(question=question):
+                    mock_reply.reset_mock()
+
+                    self.assertEqual(
+                        get_reply(question),
+                        "模擬店家資訊",
+                    )
+                    mock_reply.assert_called_once_with(
+                        "泰雅小棧特色料理"
+                    )
 
 
 if __name__ == "__main__":
