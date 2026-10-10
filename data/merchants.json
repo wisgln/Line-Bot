@@ -8,39 +8,192 @@
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路41號泰雅小棧特色料理",
     "description": "提供泰雅風味料理，有竹筒飯、高粱香腸與山豬肉，也有多人分享的合菜選擇。",
     "price_items": [
-      {
-        "name": "原住民竹筒飯",
-        "price": 80,
-        "unit": "份"
-      },
-      {
-        "name": "泰雅高粱香腸",
-        "price": 50,
-        "unit": "份"
-      },
-      {
-        "name": "泰雅山豬肉",
-        "price": 150,
-        "unit": "份"
-      },
-      {
-        "name": "五菜一湯合菜",
-        "price": 500,
-        "unit": "組"
-      },
-      {
-        "name": "小米白飯",
-        "price": 15,
-        "unit": "碗"
-      }
+      {"name": "原住民竹筒飯", "price": 80, "unit": "份"},
+      {"name": "泰雅高粱香腸", "price": 50, "unit": "份"},
+      {"name": "泰雅山豬肉", "price": 150, "unit": "份"},
+      {"name": "五菜一湯合菜", "price": 500, "unit": "組"},
+      {"name": "小米白飯", "price": 15, "unit": "碗"}
     ],
     "currency": "TWD",
-    "price_note": "公開線上菜單參考價格；500元合菜的白飯另計。實際價格與供餐狀態請向店家確認。",
+    "price_note": "公開線上菜單參考價格，非即時報價；500元合菜的白飯另計。實際價格與供餐狀態請向店家確認。",
     "opening_hours": "星期一至星期三 09:00–17:00；星期四休息；星期五 09:00–17:00；星期六 11:00–19:00；星期日 09:00–19:00。",
-    "opening_hours_note": "依使用者提供的 Google Maps 截圖整理。截圖提醒國慶日及補假營業時間可能不同；假日或臨時異動請查看 Google Maps 或向店家確認。",
-    "opening_hours_source": "使用者提供的 Google Maps 店家營業時間截圖",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "opening_hours_source": "Google Maps 店家營業時間截圖",
     "opening_hours_checked_on": "2026-10-08",
     "source_url": "https://www.menupapa.com/menu/15941",
     "source_checked_on": "2026-10-08"
+  },
+  {
+    "id": "merchant_002",
+    "name": "角板山老店家小吃",
+    "category": "餐廳",
+    "tags": ["原住民風味", "客家料理", "山產"],
+    "address": "桃園市復興區中正路7號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路7號角板山老店家小吃",
+    "description": "結合原住民與客家風味，提供山豬肉、椴木菇與馬告雞湯等料理。",
+    "price_items": [
+      {"name": "魯肉飯（小）", "price": 30, "unit": "碗"},
+      {"name": "香拌半天花", "price": 240, "unit": "份"},
+      {"name": "鮮炒椴木菇", "price": 230, "unit": "份"},
+      {"name": "蔥爆山豬肉", "price": 230, "unit": "份"},
+      {"name": "鹽酥雙菇", "price": 150, "unit": "份"}
+    ],
+    "currency": "TWD",
+    "price_note": "食記中的歷史參考價格，來源文章最後更新於2025-08-14；文章更新日期不代表菜單拍攝日期。實際價格與供餐狀態以店家公告為準。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://taotaoko.tw/laodianjia/",
+    "source_checked_on": "2026-10-09",
+    "information_source_url": "https://www.fuxing.tycg.gov.tw/News_Content.aspx?n=7156&s=680666",
+    "information_checked_on": "2026-10-08"
+  },
+  {
+    "id": "merchant_003",
+    "name": "泉頭泰雅創意料理",
+    "category": "餐廳",
+    "tags": ["羅浮", "泰雅風味", "獵人餐"],
+    "address": "桃園市復興區羅浮里147之2號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區羅浮里147之2號泉頭泰雅創意料理",
+    "description": "提供泰雅創意料理，有獵人餐、涼麵與炒飯等選擇。平日團體用餐請先向店家確認預約安排。",
+    "price_items": [
+      {"name": "招牌涼麵", "price": 60, "unit": "份"},
+      {"name": "天堂炒飯", "price": 120, "unit": "份"},
+      {"name": "招牌獵人餐", "price": 280, "unit": "套"}
+    ],
+    "currency": "TWD",
+    "price_note": "參考2026年4月食記與菜單資料，非即時報價。實際價格、套餐內容與供餐狀態以店家公告為準。",
+    "opening_hours_note": "營業時間及預約方式以店家最新公告為準。",
+    "source_url": "https://papago.tw/atayal-food/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_004",
+    "name": "羅浮老紀888牛肉麵",
+    "category": "餐廳",
+    "tags": ["羅浮", "牛肉麵", "馬告"],
+    "address": "桃園市復興區3鄰45號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區羅浮老紀888牛肉麵",
+    "description": "提供牛肉麵、飯食與熱炒，也有使用馬告調味的料理。",
+    "price_items": [
+      {"name": "紅燒牛肉麵（小）", "price": 100, "unit": "碗"},
+      {"name": "腿庫控肉飯", "price": 80, "unit": "份"},
+      {"name": "馬告山豬肉", "price": 180, "unit": "份"}
+    ],
+    "currency": "TWD",
+    "price_note": "以上為食記中的歷史價格；來源明確註明價格已調漲，不能作為目前報價。請向店家確認最新價格。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ajtravel.tw/888-beefnoodle/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_005",
+    "name": "山源小吃店",
+    "category": "餐廳",
+    "tags": ["拉拉山", "山產", "合菜"],
+    "address": "桃園市復興區華陵村10鄰130之1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區山源小吃店",
+    "description": "提供山產熱炒、高山蔬菜與湯品，可選小份單點搭配用餐人數。",
+    "price_items": [
+      {"name": "高冷蔬菜（小）", "price": 100, "unit": "份"},
+      {"name": "蒜泥白肉（小）", "price": 200, "unit": "份"},
+      {"name": "碳烤山豬肉（小）", "price": 200, "unit": "份"}
+    ],
+    "currency": "TWD",
+    "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。小份菜餚價格不等於每人餐費，最新價格請向店家確認。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ajtravel.tw/ty-shanyuan/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_006",
+    "name": "拉拉人嘉美食莊",
+    "category": "餐廳",
+    "tags": ["巴陵", "景觀", "合菜"],
+    "address": "桃園市復興區巴崚60-1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區拉拉人嘉美食莊",
+    "description": "提供合菜與山區風味料理，也有季節性的水蜜桃冰沙，可供同行旅客分享餐點。",
+    "price_items": [
+      {"name": "雙人合菜", "price": 500, "unit": "組"},
+      {"name": "水蜜桃冰沙", "price": 100, "unit": "杯"}
+    ],
+    "currency": "TWD",
+    "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。合菜內容及季節飲品供應需另向店家確認。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ajtravel.tw/ty-lalafmaily/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_007",
+    "name": "拉尼棍風味美食館",
+    "category": "餐廳",
+    "tags": ["上巴陵", "馬告烤雞", "合菜"],
+    "address": "桃園市復興區華陵里10鄰135之2號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區拉尼棍風味美食館",
+    "description": "以馬告烤雞與風味合菜為特色，提供分享式套餐選擇。",
+    "price_items": [
+      {"name": "進擊雙人烤雞餐", "price": 1200, "unit": "組"}
+    ],
+    "currency": "TWD",
+    "price_note": "食記歷史套餐價格；來源註明價格已調漲。此為雙人套餐整組價格，屬較高預算選擇；實際套餐內容、價格及預約需求請向店家確認。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ajtravel.tw/20230302/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_008",
+    "name": "阿蘭小吃",
+    "category": "餐廳",
+    "tags": ["巴陵", "便餐", "合菜"],
+    "address": "桃園市復興區巴陵12號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區巴陵12號阿蘭小吃",
+    "description": "提供滷肉飯、排骨飯、炸物與合菜，可依人數選擇飯食或分享菜餚。",
+    "price_items": [
+      {"name": "滷肉飯", "price": 50, "unit": "碗"},
+      {"name": "排骨飯", "price": 100, "unit": "份"},
+      {"name": "雞排", "price": 60, "unit": "份"}
+    ],
+    "currency": "TWD",
+    "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。店名在部分舊資料中亦記為阿霞小吃，出發前請核對地圖店名及位置。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ajtravel.tw/ty-lalafood/",
+    "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_009",
+    "name": "採山人－山產料理",
+    "category": "餐廳",
+    "tags": ["角板山", "山產", "原住民風味"],
+    "address": "桃園市復興區中山路7號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中山路7號採山人",
+    "description": "提供土雞、山菜與菇類等料理，可選多道單點菜餚搭配分享。",
+    "price_items": [
+      {"name": "山林白切土雞（小）", "price": 300, "unit": "份"},
+      {"name": "炒小魚山蘇", "price": 160, "unit": "份"},
+      {"name": "香炒桂筍", "price": 180, "unit": "份"}
+    ],
+    "currency": "TWD",
+    "price_note": "參考2023-03-22食記中的歷史價格，非目前報價；餐點價格與份量請向店家確認。",
+    "opening_hours_note": "營業時間以店家最新公告為準。",
+    "source_url": "https://ifoodie.tw/post/641c01e8d20d8745ac8eb522",
+    "source_checked_on": "2026-10-09",
+    "information_source_url": "https://ipbshop.tycg.gov.tw/shop/15",
+    "information_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_010",
+    "name": "湠火鍋",
+    "category": "餐廳",
+    "tags": ["上巴陵", "火烤兩吃", "景觀餐廳"],
+    "address": "桃園市復興區華陵里10鄰巴崚111號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區湠火鍋",
+    "description": "提供火鍋與炭烤搭配的套餐，搭配馬告等風味調味；用餐及牛骨麵供應請事先預約確認。",
+    "price_items": [
+      {"name": "牛骨麵套餐（微辣）", "price": 280, "unit": "位"},
+      {"name": "火烤二吃經典套餐", "price": 580, "unit": "位"}
+    ],
+    "currency": "TWD",
+    "price_note": "參考2025-02-08食記的歷史價格。火烤套餐另加10%服務費，屬較高預算選擇；最新費用、套餐內容與預約方式請向店家確認。",
+    "opening_hours_note": "營業時間及預約方式以店家最新公告為準。",
+    "source_url": "https://tiffanylin66.pixnet.net/blog/posts/3051025648",
+    "source_checked_on": "2026-10-09"
   }
 ]

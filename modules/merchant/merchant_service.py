@@ -17,6 +17,7 @@ def normalize(text):
 
 
 def load_merchants(data_path=None):
+    """讀取並驗證商家資料。"""
     path = Path(data_path) if data_path is not None else DATA_PATH
 
     with path.open("r", encoding="utf-8-sig") as file:
@@ -51,15 +52,21 @@ def load_merchants(data_path=None):
             "price_note",
             "opening_hours",
             "opening_hours_note",
+            "opening_hours_source",
             "opening_hours_checked_on",
             "source_checked_on",
+            "information_checked_on",
             "currency",
         ):
             value = merchant.get(field)
             if value is not None and not isinstance(value, str):
                 raise ValueError(f"{field} 必須為文字或 null")
 
-        for field in ("maps_url", "source_url"):
+        for field in (
+            "maps_url",
+            "source_url",
+            "information_source_url",
+        ):
             value = merchant.get(field)
             if value is not None and (
                 not isinstance(value, str)
@@ -92,7 +99,7 @@ def load_merchants(data_path=None):
 
 
 def format_merchant(merchant):
-    """顯示特色、參考價格、地圖及菜單來源。"""
+    """顯示商家特色、參考價格、地圖與價格來源。"""
     lines = [
         merchant["name"],
         f"類型：{merchant['category']}",
@@ -118,7 +125,7 @@ def format_merchant(merchant):
 
         if merchant.get("source_checked_on"):
             lines.append(
-                "菜單資料查詢日期："
+                "價格來源查詢日期："
                 + merchant["source_checked_on"]
             )
 
@@ -132,7 +139,7 @@ def format_merchant(merchant):
     source_url = merchant.get("source_url")
     if source_url:
         lines.append(
-            "\n📋 查看線上菜單：\n"
+            "\n📋 查看餐點與價格來源：\n"
             + quote(source_url, safe=":/?=&%")
         )
 
@@ -152,14 +159,16 @@ def get_merchant_reply(text="", *, data_path=None):
     try:
         merchants = load_merchants(data_path)
     except (OSError, ValueError):
-        return "商家資料暫時無法讀取，請稍後再試，或通知專題管理者。"
+        return (
+            "商家資料暫時無法讀取，請稍後再試，"
+            "或通知專題管理者。"
+        )
 
     if not merchants:
         return "目前尚未提供商家資料。"
 
     query = normalize(text)
 
-    # 第一版支援明確的分類查詢與商家名稱搜尋。
     categories = {
         "餐廳": "餐廳",
         "推薦餐廳": "餐廳",
