@@ -10,16 +10,24 @@ from .traffic import get_traffic_reply
 logger = logging.getLogger(__name__)
 
 WELCOME = (
-    "你好！目前提供系統使用 FAQ、桃園市復興區天氣預報、"
-    "在地商家查詢、緊急聯絡與交通資訊。"
-    "可以問我：需要下載 App 嗎？如何分享位置？"
-    "復興區天氣如何？推薦餐廳。"
-    "也可以輸入店家名稱、緊急聯絡、怎麼去角板山。"
+    "你好！目前提供系統使用 FAQ、復興區天氣預報、"
+    "商家查詢、緊急聯絡與交通資訊。"
+    "可以問我：需要下載 App 嗎？"
+    "復興區天氣如何？肚子餓了，有什麼能吃？"
+    "拉拉山要搭什麼車？"
+    "也可以輸入店家名稱或「緊急聯絡」。"
 )
 
 FALLBACK = (
     "目前找不到對應的答案。請一次問一個問題，"
     "或輸入「使用說明」查看可用內容。"
+)
+
+NEARBY_REPLY = (
+    "附近推薦需要你的位置，並由定位模組計算距離。"
+    "這項功能待整合後提供；目前可先輸入"
+    "「推薦餐廳」或「民宿」查看已收錄資料。"
+    "這些清單不代表距離你最近的商家。"
 )
 
 PENDING = {
@@ -43,12 +51,7 @@ PENDING = {
 
 
 def get_reply(text: str, *, faq_path=None) -> str:
-    """回傳回答文字，由呼叫端負責傳送到 LINE。
-
-    FAQ、商家、緊急聯絡與交通資料讀取本機 JSON。
-    天氣查詢需要 WEATHER_API_KEY。
-    本系統不會代為報案，也不提供即時交通資訊。
-    """
+    """回傳文字，由呼叫端負責傳送至 LINE。"""
     query = normalize(text)
 
     if len(text) > 2000:
@@ -64,13 +67,20 @@ def get_reply(text: str, *, faq_path=None) -> str:
     }:
         return WELCOME
 
+    # 緊急聯絡優先於其他查詢。
     emergency_reply = get_emergency_reply(text)
     if emergency_reply is not None:
         return emergency_reply
 
+    intent = detect_intent(text)
+
     traffic_reply = get_traffic_reply(text)
     if traffic_reply is not None:
         return traffic_reply
+
+    # 新交通問法保留原問題中的地名。
+    if intent == "traffic":
+        return get_traffic_reply(f"交通 {text}")
 
     try:
         answer = find_answer(text, load_faq(faq_path))
@@ -81,16 +91,18 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if answer is not None:
         return answer
 
-    intent = detect_intent(text)
-
     if intent == "weather":
         from modules.weather.weather_service import get_weather_reply
 
         return get_weather_reply()
 
-    # 保留舊 intent 的交通判斷，統一轉到交通模組。
-    if intent == "traffic":
-        return get_traffic_reply("交通")
+    # 尚未整合定位，不把全部商家當成附近推薦。
+    if intent == "nearby_merchant":
+        return NEARBY_REPLY
+
+    # 避免用商家介紹冒充優惠券資訊。
+    if "優惠券" in query:
+        return PENDING["merchant"]
 
     from modules.merchant.merchant_service import (
         get_merchant_reply,
@@ -103,7 +115,9 @@ def get_reply(text: str, *, faq_path=None) -> str:
         logger.exception("Unable to load merchant data")
         merchants = []
 
+    # 店名優先，避免「泰雅」等字詞被當成文化問題。
     matched_names = []
+
     for merchant in merchants:
         name = normalize(merchant["name"])
         if name in query or (len(query) >= 2 and query in name):
@@ -117,9 +131,7 @@ def get_reply(text: str, *, faq_path=None) -> str:
         lines.extend(f"・{name}" for name in matched_names[:10])
         return "\n".join(lines)
 
-    if "優惠券" in query:
-        return PENDING["merchant"]
-
+    # 保留原本的明確分類查詢。
     if any(word in query for word in ("餐廳", "美食")):
         return get_merchant_reply("餐廳")
 
@@ -128,5 +140,12 @@ def get_reply(text: str, *, faq_path=None) -> str:
 
     if "商家" in query:
         return get_merchant_reply("商家")
+
+    # 自然問法轉成商家模組支援的分類。
+    if intent == "lodging":
+        return get_merchant_reply("民宿")
+
+    if intent == "merchant":
+        return get_merchant_reply("餐廳")
 
     return PENDING.get(intent, FALLBACK)
