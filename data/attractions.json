@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "小烏來天空步道",
+    "category": "自然景觀",
+    "latitude": 24.7903,
+    "longitude": 121.3752,
+    "address": "桃園市復興區義盛里",
+    "opening_hours": "08:00-17:00",
+    "description": "復興區知名天空步道景點",
+    "image_url": "",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=小烏來天空步道"
+  },
+  {
+    "id": 2,
+    "name": "角板山行館",
+    "category": "歷史文化",
+    "latitude": 24.8176,
+    "longitude": 121.3518,
+    "address": "桃園市復興區中正路133-1號",
+    "opening_hours": "08:00-17:00",
+    "description": "復興區重要歷史與休憩景點",
+    "image_url": "",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=角板山行館"
+  },
+  {
+    "id": 3,
+    "name": "羅浮溫泉",
+    "category": "休閒",
+    "latitude": 24.792,
+    "longitude": 121.365,
+    "address": "桃園市復興區羅浮",
+    "opening_hours": "",
+    "description": "復興區羅浮地區溫泉景點",
+    "image_url": "",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=羅浮溫泉"
+  }
+]
