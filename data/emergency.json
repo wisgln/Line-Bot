@@ -1,0 +1,34 @@
+[
+  {
+    "id": "fire_rescue",
+    "name": "消防、救護與救援",
+    "phone": "119",
+    "description": "火災、需要救護車或山域救援等緊急狀況。",
+    "source_url": "https://www.nfa.gov.tw/cht/?code=list&ids=66",
+    "checked_on": "2026-10-09"
+  },
+  {
+    "id": "police",
+    "name": "警察報案",
+    "phone": "110",
+    "description": "遭遇犯罪、人身安全威脅或需要警察協助的緊急狀況。",
+    "source_url": "https://www.npa.gov.tw/en/app/folder/8032",
+    "checked_on": "2026-10-09"
+  },
+  {
+    "id": "anti_fraud",
+    "name": "反詐騙諮詢",
+    "phone": "165",
+    "description": "疑似詐騙的諮詢、檢舉或報案；若有人身安全的立即危險，請撥110。",
+    "source_url": "https://165.npa.gov.tw/",
+    "checked_on": "2026-10-09"
+  },
+  {
+    "id": "mobile_emergency",
+    "name": "手機緊急救難（收訊不佳時）",
+    "phone": "112",
+    "description": "手機沒有SIM卡或自己的電信業者收訊不佳時可撥打，需有電力且在任一業者訊號範圍內。撥通後按0轉警察、按9轉消防。收訊正常時請優先直接撥119或110。",
+    "source_url": "https://www.cht.com.tw/home/consumer/customer-service/announce/112",
+    "checked_on": "2026-10-10"
+  }
+]
