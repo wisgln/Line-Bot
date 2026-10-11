@@ -6,16 +6,17 @@ from .emergency import get_emergency_reply
 from .faq import find_answer, load_faq
 from .intent import detect_intent, normalize
 from .traffic import get_traffic_reply
+from .local_products import get_local_products_reply
 
 logger = logging.getLogger(__name__)
 
 WELCOME = (
     "你好！目前提供系統使用 FAQ、復興區天氣預報、"
-    "商家查詢、緊急聯絡與交通資訊。"
+    "商家查詢、農特產介紹、緊急聯絡與交通資訊。"
     "可以問我：需要下載 App 嗎？"
     "復興區天氣如何？肚子餓了，有什麼能吃？"
     "拉拉山要搭什麼車？"
-    "也可以輸入店家名稱或「緊急聯絡」。"
+    "也可以輸入店家名稱、「復興有什麼農特產？」或「緊急聯絡」。"
 )
 
 FALLBACK = (
@@ -141,6 +142,11 @@ def get_reply(text: str, *, faq_path=None) -> str:
         lines = ["找到多間符合的商家，請輸入完整店名："]
         lines.extend(f"・{name}" for name in matched_names[:10])
         return "\n".join(lines)
+
+    # 完整店名優先；一般農產問題轉到資料介紹。
+    product_reply = get_local_products_reply(text)
+    if product_reply is not None:
+        return product_reply
 
     # 保留原本的明確分類查詢。
     if any(word in query for word in ("餐廳", "美食")):
