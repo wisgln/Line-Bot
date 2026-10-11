@@ -115,6 +115,10 @@ def get_reply(text: str, *, faq_path=None) -> str:
         logger.exception("Unable to load merchant data")
         merchants = []
 
+    # 分類詞本身不能被含有「民宿」的店名攔截。
+    if query in {"民宿", "住宿", "推薦民宿"}:
+        return get_merchant_reply("民宿")
+
     # 店名優先，避免「泰雅」等字詞被當成文化問題。
     matched_names = []
 

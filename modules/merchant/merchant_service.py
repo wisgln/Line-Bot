@@ -98,9 +98,43 @@ def load_merchants(data_path=None):
     return merchants
 
 
+
+def format_lodging(merchant):
+    """住宿專用排版；未收錄房價時提供查價入口。"""
+    lines = ["🏡 今晚，住進山裡吧！", merchant["name"],
+             f"\n📍 住宿地址\n{merchant['address']}"]
+    if merchant.get("description"):
+        lines.append(f"\n🌿 這裡的小亮點\n{merchant['description']}")
+    prices = merchant.get("price_items", [])
+    currency = merchant.get("currency") or "TWD"
+    lines.append(f"\n💰 住宿參考價（{currency}）")
+    for item in prices[:5]:
+        lines.append(f"・{item['name']}｜{item['price']:,} 元／{item['unit']}")
+    if len(prices) > 5:
+        lines.append("更多房型價格，請查看下方來源。")
+    if merchant.get("price_note"):
+        lines.append(merchant["price_note"])
+    elif not prices:
+        lines.append("選好日期與人數，再向業者確認房價吧！")
+    source = merchant.get("source_url")
+    if source:
+        label = ("🔎 官方旅遊資訊｜房型與聯絡方式" if merchant.get("source_kind") == "tourism"
+                 else "🏡 民宿官網｜房型、價格與訂房資訊")
+        lines.append(f"\n{label}\n" + quote(source, safe=":/?=&%"))
+    if merchant.get("maps_url"):
+        lines.append("\n🧭 帶我去這裡（Google Maps）\n" + quote(merchant["maps_url"], safe=":/?=&%"))
+    checked = merchant.get("source_checked_on") or merchant.get("information_checked_on")
+    if checked:
+        lines.append(f"\n🗓 資料查詢日期：{checked}")
+    lines.append("\n💛 出發前小提醒\n房價與空房以業者確認為準；喜歡的話，記得自行聯絡訂房喔！")
+    return "\n".join(lines)
+
+
 def format_merchant(merchant):
     """依商家類型顯示特色、參考價格、地圖與來源。"""
     is_lodging = merchant["category"] == "民宿"
+    if is_lodging:
+        return format_lodging(merchant)
 
     lines = [
         merchant["name"],
@@ -156,7 +190,7 @@ def format_merchant(merchant):
             + quote(maps_url, safe=":/?=&%")
         )
 
-        source_url = merchant.get("source_url")
+    source_url = merchant.get("source_url")
     if source_url:
         if is_lodging:
             source_label = "🏡 民宿官網｜房型、價格與訂房資訊："
@@ -237,20 +271,23 @@ def get_merchant_reply(text="", *, data_path=None):
 
     # 多筆結果先顯示清單，避免 LINE 訊息過長。
     if len(matches) > 1:
-        lines = ["符合的商家："]
+        lodging_only = all(m["category"] == "民宿" for m in matches)
+        limit = 20 if lodging_only else 10
+        lines = ([f"🏡 山裡住一晚｜{len(matches)} 家民宿口袋名單", "慢慢挑一間，替旅程留個舒服的落腳處 🌿"]
+                 if lodging_only else ["符合的商家："])
 
-        for merchant in matches[:10]:
+        for merchant in matches[:limit]:
             lines.append(
                 f"・{merchant['name']}（{merchant['category']}）"
             )
 
-        if len(matches) > 10:
+        if len(matches) > limit:
             lines.append(
-                "目前只顯示前 10 筆，"
+                f"目前只顯示前 {limit} 筆，"
                 "可輸入「餐廳」或「民宿」縮小範圍。"
             )
 
-        lines.append("請輸入店家名稱查看詳細資訊。")
+        lines.append("\n💬 喜歡哪一家？輸入完整店名，看看特色、房價與訂房資訊！" if lodging_only else "請輸入店家名稱查看詳細資訊。")
         return "\n".join(lines)
 
     return format_merchant(matches[0])
