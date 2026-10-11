@@ -35,6 +35,11 @@ def handle_location_message(event, configuration):
                 f"營業時間：{place['opening_hours']}"
             )
 
+        if place.get("phone"):
+            lines.append(
+                f"電話：{place['phone']}"
+            )
+
         if place.get("maps_url"):
             lines.append(
                 f"🗺️ 導航：{place['maps_url']}"
