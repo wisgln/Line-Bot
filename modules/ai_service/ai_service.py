@@ -119,6 +119,13 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if query in {"民宿", "住宿", "推薦民宿"}:
         return get_merchant_reply("民宿")
 
+    if query in {"餐廳", "推薦餐廳", "找餐廳", "美食", "推薦美食"}:
+        return get_merchant_reply("餐廳")
+
+    for merchant in merchants:
+        if normalize(merchant["name"]) == query:
+            return get_merchant_reply(merchant["name"])
+
     # 店名優先，避免「泰雅」等字詞被當成文化問題。
     matched_names = []
 
