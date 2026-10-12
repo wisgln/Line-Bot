@@ -1,0 +1,39 @@
+[
+  {
+    "id": "jiaobanshan",
+    "name": "角板山",
+    "aliases": ["角板山"],
+    "notes": [
+      "可參考台灣好行502小烏來線，沿線包含角板山。",
+      "502為假日行駛路線；平日前往時，請另查桃園公車系統的可用路線。",
+      "搭乘前請確認出發站、方向、停靠站與回程班次。"
+    ],
+    "source_url": "https://www.taiwantrip.com.tw/Frontend/Route/Select_p?RouteID=R0021",
+    "checked_on": "2026-10-10"
+  },
+  {
+    "id": "xiaowulai",
+    "name": "小烏來",
+    "aliases": ["小烏來"],
+    "notes": [
+      "可參考台灣好行502小烏來線，起迄站為桃園客運桃園總站與小烏來天空步道。",
+      "502為假日行駛路線，不能視為每天都有班次。",
+      "請先確認去回程時刻、停靠站及園區開放公告。"
+    ],
+    "source_url": "https://www.taiwantrip.com.tw/Frontend/Route/Select_p?RouteID=R0021",
+    "checked_on": "2026-10-10"
+  },
+  {
+    "id": "lalashan",
+    "name": "拉拉山",
+    "aliases": ["拉拉山"],
+    "notes": [
+      "拉拉山國家森林遊樂區官方交通資訊列有5090、5091及5301路線。",
+      "官方列示路線終點為林班口；請依出發地確認搭乘路線、實際停靠站及當日班次。",
+      "林班口下車不代表已抵達園區內的步道；請另查下車後的步行或接駁安排。",
+      "出發前請同時確認回程班次與園區開休園公告。"
+    ],
+    "source_url": "https://recreation.forest.gov.tw/Forest/RA?typ_id=0200005",
+    "checked_on": "2026-10-10"
+  }
+]
