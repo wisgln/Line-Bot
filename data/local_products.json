@@ -1,0 +1,173 @@
+[
+  {
+    "id": "product_001",
+    "name": "水蜜桃",
+    "keywords": [
+      "水蜜桃",
+      "五月桃",
+      "媽媽桃"
+    ],
+    "description": "夏天的山裡好味，替旅程添一點甜！選購前先問品種與採收安排吧。",
+    "season": "依農糧署 2025 年介紹：水蜜桃約 6～7 月；中低海拔五月桃約 5 月登場。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=31888&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🍑 果香小旅行"
+  },
+  {
+    "id": "product_002",
+    "name": "甜柿",
+    "keywords": [
+      "甜柿"
+    ],
+    "description": "秋天來復興，也可以把甜柿放進伴手禮名單！先問果品規格，再挑適合自己的份量。",
+    "season": "依農糧署 2025 年介紹：約 10～11 月。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=31888&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🍑 果香小旅行"
+  },
+  {
+    "id": "product_003",
+    "name": "桂竹筍",
+    "keywords": [
+      "桂竹筍"
+    ],
+    "description": "想把春天的山裡滋味帶回餐桌？看看桂竹筍吧，購買時記得確認是鮮筍還是加工品。",
+    "season": "農業局 2025 年資料列桂竹筍約 4～6 月；採收依產地及天候調整。",
+    "source_url": "https://agriculture.tycg.gov.tw/News_Content.aspx?n=10607&s=1557654",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🥬 山野餐桌"
+  },
+  {
+    "id": "product_004",
+    "name": "綠竹筍",
+    "keywords": [
+      "綠竹筍"
+    ],
+    "description": "夏日餐桌想換點在地食材？綠竹筍也是復興農產的一員，先向業者詢問當期採收與保存方式。",
+    "season": "農業局 2025 年資料列綠竹筍盛產約 6～9 月；農糧署資料亦提及 5～6 月供應，請向農友確認當期採收。",
+    "source_url": "https://agriculture.tycg.gov.tw/News_Content.aspx?n=10607&s=1557654",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🥬 山野餐桌"
+  },
+  {
+    "id": "product_005",
+    "name": "段木香菇",
+    "keywords": [
+      "段木香菇",
+      "椴木香菇",
+      "香菇"
+    ],
+    "description": "山裡好物帶回家，也替下一餐留一點期待！挑香菇時先確認乾貨或鮮品、重量與包裝。",
+    "season": "官方列為全年農產；鮮品與乾貨的實際供應請分別洽詢。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=31888&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🥬 山野餐桌"
+  },
+  {
+    "id": "product_006",
+    "name": "高山茶",
+    "keywords": [
+      "高山茶",
+      "烏龍茶",
+      "茶葉"
+    ],
+    "description": "想挑一份能慢慢享用的山中伴手禮？看看高山茶，購買前先問茶種、規格與喜歡的風味吧。",
+    "season": "官方列為全年農產；不同茶種的採製與販售時間請洽業者。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=31888&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11",
+    "group": "🍵 茶香與咖啡"
+  },
+  {
+    "id": "product_007",
+    "name": "柑橘",
+    "keywords": [
+      "柑橘",
+      "柑桔"
+    ],
+    "group": "🍑 果香小旅行",
+    "description": "冬日走訪復興，也能把柑橘放進採買名單！品種、大小與禮盒規格，先向農友問清楚再挑選。",
+    "season": "官方農遊介紹列約 1～3 月。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=30327&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  },
+  {
+    "id": "product_008",
+    "name": "奇異果",
+    "keywords": [
+      "奇異果",
+      "獼猴桃",
+      "彌猴桃"
+    ],
+    "group": "🍑 果香小旅行",
+    "description": "除了桃與柿，復興也有奇異果！想試試在地果香，購買時問問成熟度與適合享用的時間吧。",
+    "season": "官方農遊介紹列約 9 月。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=30327&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  },
+  {
+    "id": "product_009",
+    "name": "在地咖啡",
+    "keywords": [
+      "咖啡"
+    ],
+    "group": "🍵 茶香與咖啡",
+    "description": "把山中旅行延續到下一杯咖啡吧！可向在地業者詢問咖啡豆的產地、烘焙程度與包裝，挑選自己喜歡的風味。",
+    "season": "官方列為全年農產；咖啡豆販售不等於全年採收，批次及供應請洽業者。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=30327&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  },
+  {
+    "id": "product_010",
+    "name": "在地蔬菜",
+    "keywords": [
+      "蔬菜",
+      "高冷蔬菜",
+      "高山蔬菜"
+    ],
+    "group": "🥬 山野餐桌",
+    "description": "把復興的農產帶回日常餐桌！蔬菜種類會隨種植與採收安排變化，出發前先詢問當天可以買到哪些。",
+    "season": "官方列為全年農產類別；各種蔬菜的產期不同，並非每種全年都有。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=30327&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  },
+  {
+    "id": "product_011",
+    "name": "園藝花卉",
+    "keywords": [
+      "花卉",
+      "園藝"
+    ],
+    "group": "🌼 花草小日子",
+    "description": "想帶回家的不一定只有吃的！復興也有園藝花卉，可以向業者詢問當期品種與照顧方式。",
+    "season": "官方列為全年農產類別；花期及可購品種依業者資訊為準，不代表全年盛開。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=30327&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  },
+  {
+    "id": "product_012",
+    "name": "水蜜桃加工伴手禮",
+    "keywords": [
+      "水蜜桃加工",
+      "水蜜桃米乖乖",
+      "水蜜桃霜淇淋",
+      "水蜜桃甘糀"
+    ],
+    "group": "🎁 農產變身伴手禮",
+    "description": "水蜜桃也能變身小點心！官方曾介紹水蜜桃米乖乖、霜淇淋等加工品；喜歡哪一種，先問農會當期是否販售吧。",
+    "season": "加工品沒有固定鮮果產季；品項、庫存與販售期間請向農會確認。",
+    "source_url": "https://nrb.afa.gov.tw/index.php?article_id=31888&code=list&flag=detail&ids=114",
+    "purchase_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2045",
+    "checked_on": "2026-10-11"
+  }
+]
