@@ -1,3 +1,6 @@
+
+import json
+
 from linebot.v3.messaging import (
     ApiClient,
     MessagingApi,
@@ -5,8 +8,14 @@ from linebot.v3.messaging import (
     TemplateMessage,
     ButtonsTemplate,
     PostbackAction,
-    TextMessage
+    TextMessage,
+    FlexMessage,
+    FlexContainer
 )
+
+from modules.attraction.attraction_service import get_all_attractions
+from modules.attraction.flex_message import create_attraction_carousel
+
 
 
 def get_ai_reply(text):
@@ -54,9 +63,30 @@ def handle_text_message(event, configuration):
             reply_text = "請傳送你的目前位置，我幫你找附近景點！"
             # TODO: 3 號接手，改成呼叫 modules/location
 
+        
         elif text == '景點導覽':
-            reply_text = "景點導覽功能準備中"
-            # TODO: 2 號接手，改成呼叫 modules/attraction
+            attractions = get_all_attractions()
+
+            if not attractions:
+                reply_text = "目前沒有景點資料，請稍後再試。"
+            else:
+                carousel = create_attraction_carousel(attractions)
+
+                flex_message = FlexMessage(
+                    alt_text="復興區景點導覽",
+                    contents=FlexContainer.from_json(
+                        json.dumps(carousel, ensure_ascii=False)
+                    )
+                )
+
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[flex_message]
+                    )
+                )
+                return
+
 
         elif text == '泰雅文化':
             reply_text = "泰雅文化介紹準備中"
