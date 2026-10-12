@@ -3,16 +3,40 @@
     "id": "merchant_001",
     "name": "泰雅小棧特色料理",
     "category": "餐廳",
-    "tags": ["泰雅風味", "合菜", "竹筒飯"],
+    "tags": [
+      "泰雅風味",
+      "合菜",
+      "竹筒飯"
+    ],
     "address": "桃園市復興區澤仁里中正路41號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路41號泰雅小棧特色料理",
-    "description": "提供泰雅風味料理，有竹筒飯、高粱香腸與山豬肉，也有多人分享的合菜選擇。",
+    "description": "肚子餓了，來點泰雅風味吧！竹筒飯、高粱香腸和山豬肉都是這裡的選擇；揪上旅伴，也能一起分享合菜。",
     "price_items": [
-      {"name": "原住民竹筒飯", "price": 80, "unit": "份"},
-      {"name": "泰雅高粱香腸", "price": 50, "unit": "份"},
-      {"name": "泰雅山豬肉", "price": 150, "unit": "份"},
-      {"name": "五菜一湯合菜", "price": 500, "unit": "組"},
-      {"name": "小米白飯", "price": 15, "unit": "碗"}
+      {
+        "name": "原住民竹筒飯",
+        "price": 80,
+        "unit": "份"
+      },
+      {
+        "name": "泰雅高粱香腸",
+        "price": 50,
+        "unit": "份"
+      },
+      {
+        "name": "泰雅山豬肉",
+        "price": 150,
+        "unit": "份"
+      },
+      {
+        "name": "五菜一湯合菜",
+        "price": 500,
+        "unit": "組"
+      },
+      {
+        "name": "小米白飯",
+        "price": 15,
+        "unit": "碗"
+      }
     ],
     "currency": "TWD",
     "price_note": "公開線上菜單參考價格，非即時報價；500元合菜的白飯另計。實際價格與供餐狀態請向店家確認。",
@@ -27,16 +51,40 @@
     "id": "merchant_002",
     "name": "角板山老店家小吃",
     "category": "餐廳",
-    "tags": ["原住民風味", "客家料理", "山產"],
+    "tags": [
+      "原住民風味",
+      "客家料理",
+      "山產"
+    ],
     "address": "桃園市復興區中正路7號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路7號角板山老店家小吃",
-    "description": "結合原住民與客家風味，提供山豬肉、椴木菇與馬告雞湯等料理。",
+    "description": "想把山裡的滋味端上桌？這裡結合原住民與客家風味，可以看看山豬肉、椴木菇和馬告雞湯，挑幾道一起分享吧！",
     "price_items": [
-      {"name": "魯肉飯（小）", "price": 30, "unit": "碗"},
-      {"name": "香拌半天花", "price": 240, "unit": "份"},
-      {"name": "鮮炒椴木菇", "price": 230, "unit": "份"},
-      {"name": "蔥爆山豬肉", "price": 230, "unit": "份"},
-      {"name": "鹽酥雙菇", "price": 150, "unit": "份"}
+      {
+        "name": "魯肉飯（小）",
+        "price": 30,
+        "unit": "碗"
+      },
+      {
+        "name": "香拌半天花",
+        "price": 240,
+        "unit": "份"
+      },
+      {
+        "name": "鮮炒椴木菇",
+        "price": 230,
+        "unit": "份"
+      },
+      {
+        "name": "蔥爆山豬肉",
+        "price": 230,
+        "unit": "份"
+      },
+      {
+        "name": "鹽酥雙菇",
+        "price": 150,
+        "unit": "份"
+      }
     ],
     "currency": "TWD",
     "price_note": "食記中的歷史參考價格，來源文章最後更新於2025-08-14；文章更新日期不代表菜單拍攝日期。實際價格與供餐狀態以店家公告為準。",
@@ -50,14 +98,30 @@
     "id": "merchant_003",
     "name": "泉頭泰雅創意料理",
     "category": "餐廳",
-    "tags": ["羅浮", "泰雅風味", "獵人餐"],
+    "tags": [
+      "羅浮",
+      "泰雅風味",
+      "獵人餐"
+    ],
     "address": "桃園市復興區羅浮里147之2號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區羅浮里147之2號泉頭泰雅創意料理",
-    "description": "提供泰雅創意料理，有獵人餐、涼麵與炒飯等選擇。平日團體用餐請先向店家確認預約安排。",
+    "description": "在羅浮停一站，替旅程補充能量吧！獵人餐、涼麵和炒飯各有選擇；平日團體用餐，記得先詢問預約安排喔。",
     "price_items": [
-      {"name": "招牌涼麵", "price": 60, "unit": "份"},
-      {"name": "天堂炒飯", "price": 120, "unit": "份"},
-      {"name": "招牌獵人餐", "price": 280, "unit": "套"}
+      {
+        "name": "招牌涼麵",
+        "price": 60,
+        "unit": "份"
+      },
+      {
+        "name": "天堂炒飯",
+        "price": 120,
+        "unit": "份"
+      },
+      {
+        "name": "招牌獵人餐",
+        "price": 280,
+        "unit": "套"
+      }
     ],
     "currency": "TWD",
     "price_note": "參考2026年4月食記與菜單資料，非即時報價。實際價格、套餐內容與供餐狀態以店家公告為準。",
@@ -69,14 +133,30 @@
     "id": "merchant_004",
     "name": "羅浮老紀888牛肉麵",
     "category": "餐廳",
-    "tags": ["羅浮", "牛肉麵", "馬告"],
+    "tags": [
+      "羅浮",
+      "牛肉麵",
+      "馬告"
+    ],
     "address": "桃園市復興區3鄰45號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區羅浮老紀888牛肉麵",
-    "description": "提供牛肉麵、飯食與熱炒，也有使用馬告調味的料理。",
+    "description": "旅途中想吃碗麵，還是來份飯？這裡有牛肉麵、飯食與熱炒，也能看看馬告山豬肉，替這一餐換個口味！",
     "price_items": [
-      {"name": "紅燒牛肉麵（小）", "price": 100, "unit": "碗"},
-      {"name": "腿庫控肉飯", "price": 80, "unit": "份"},
-      {"name": "馬告山豬肉", "price": 180, "unit": "份"}
+      {
+        "name": "紅燒牛肉麵（小）",
+        "price": 100,
+        "unit": "碗"
+      },
+      {
+        "name": "腿庫控肉飯",
+        "price": 80,
+        "unit": "份"
+      },
+      {
+        "name": "馬告山豬肉",
+        "price": 180,
+        "unit": "份"
+      }
     ],
     "currency": "TWD",
     "price_note": "以上為食記中的歷史價格；來源明確註明價格已調漲，不能作為目前報價。請向店家確認最新價格。",
@@ -88,14 +168,30 @@
     "id": "merchant_005",
     "name": "山源小吃店",
     "category": "餐廳",
-    "tags": ["拉拉山", "山產", "合菜"],
+    "tags": [
+      "拉拉山",
+      "山產",
+      "合菜"
+    ],
     "address": "桃園市復興區華陵村10鄰130之1號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區山源小吃店",
-    "description": "提供山產熱炒、高山蔬菜與湯品，可選小份單點搭配用餐人數。",
+    "description": "走進山裡，也把山中滋味放進餐盤吧！山產熱炒、高山蔬菜與湯品都能搭配，先看看份量，再和旅伴一起點餐。",
     "price_items": [
-      {"name": "高冷蔬菜（小）", "price": 100, "unit": "份"},
-      {"name": "蒜泥白肉（小）", "price": 200, "unit": "份"},
-      {"name": "碳烤山豬肉（小）", "price": 200, "unit": "份"}
+      {
+        "name": "高冷蔬菜（小）",
+        "price": 100,
+        "unit": "份"
+      },
+      {
+        "name": "蒜泥白肉（小）",
+        "price": 200,
+        "unit": "份"
+      },
+      {
+        "name": "碳烤山豬肉（小）",
+        "price": 200,
+        "unit": "份"
+      }
     ],
     "currency": "TWD",
     "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。小份菜餚價格不等於每人餐費，最新價格請向店家確認。",
@@ -107,13 +203,25 @@
     "id": "merchant_006",
     "name": "拉拉人嘉美食莊",
     "category": "餐廳",
-    "tags": ["巴陵", "景觀", "合菜"],
+    "tags": [
+      "巴陵",
+      "景觀",
+      "合菜"
+    ],
     "address": "桃園市復興區巴崚60-1號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區拉拉人嘉美食莊",
-    "description": "提供合菜與山區風味料理，也有季節性的水蜜桃冰沙，可供同行旅客分享餐點。",
+    "description": "揪旅伴來吃合菜吧！這裡有山區風味料理，水蜜桃季還能詢問冰沙是否供應，替旅程加一點甜甜的期待。",
     "price_items": [
-      {"name": "雙人合菜", "price": 500, "unit": "組"},
-      {"name": "水蜜桃冰沙", "price": 100, "unit": "杯"}
+      {
+        "name": "雙人合菜",
+        "price": 500,
+        "unit": "組"
+      },
+      {
+        "name": "水蜜桃冰沙",
+        "price": 100,
+        "unit": "杯"
+      }
     ],
     "currency": "TWD",
     "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。合菜內容及季節飲品供應需另向店家確認。",
@@ -125,12 +233,20 @@
     "id": "merchant_007",
     "name": "拉尼棍風味美食館",
     "category": "餐廳",
-    "tags": ["上巴陵", "馬告烤雞", "合菜"],
+    "tags": [
+      "上巴陵",
+      "馬告烤雞",
+      "合菜"
+    ],
     "address": "桃園市復興區華陵里10鄰135之2號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區拉尼棍風味美食館",
-    "description": "以馬告烤雞與風味合菜為特色，提供分享式套餐選擇。",
+    "description": "今天想吃得有儀式感？看看馬告烤雞與風味合菜吧！烤雞餐以整組計價，先確認人數、份量和預約，再開心出發。",
     "price_items": [
-      {"name": "進擊雙人烤雞餐", "price": 1200, "unit": "組"}
+      {
+        "name": "進擊雙人烤雞餐",
+        "price": 1200,
+        "unit": "組"
+      }
     ],
     "currency": "TWD",
     "price_note": "食記歷史套餐價格；來源註明價格已調漲。此為雙人套餐整組價格，屬較高預算選擇；實際套餐內容、價格及預約需求請向店家確認。",
@@ -142,14 +258,30 @@
     "id": "merchant_008",
     "name": "阿蘭小吃",
     "category": "餐廳",
-    "tags": ["巴陵", "便餐", "合菜"],
+    "tags": [
+      "巴陵",
+      "便餐",
+      "合菜"
+    ],
     "address": "桃園市復興區巴陵12號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區巴陵12號阿蘭小吃",
-    "description": "提供滷肉飯、排骨飯、炸物與合菜，可依人數選擇飯食或分享菜餚。",
+    "description": "在巴陵替肚子充個電！滷肉飯、排骨飯、炸物與合菜都有選擇。查詢時也可留意「阿霞小吃」的名稱，出發前確認店址喔。",
     "price_items": [
-      {"name": "滷肉飯", "price": 50, "unit": "碗"},
-      {"name": "排骨飯", "price": 100, "unit": "份"},
-      {"name": "雞排", "price": 60, "unit": "份"}
+      {
+        "name": "滷肉飯",
+        "price": 50,
+        "unit": "碗"
+      },
+      {
+        "name": "排骨飯",
+        "price": 100,
+        "unit": "份"
+      },
+      {
+        "name": "雞排",
+        "price": 60,
+        "unit": "份"
+      }
     ],
     "currency": "TWD",
     "price_note": "以上為食記中的歷史價格；來源註明價格已調漲。店名在部分舊資料中亦記為阿霞小吃，出發前請核對地圖店名及位置。",
@@ -161,14 +293,30 @@
     "id": "merchant_009",
     "name": "採山人－山產料理",
     "category": "餐廳",
-    "tags": ["角板山", "山產", "原住民風味"],
+    "tags": [
+      "角板山",
+      "山產",
+      "原住民風味"
+    ],
     "address": "桃園市復興區中山路7號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中山路7號採山人",
-    "description": "提供土雞、山菜與菇類等料理，可選多道單點菜餚搭配分享。",
+    "description": "想和朋友一起點滿一桌？土雞、山菜與菇類料理可以搭配分享，挑幾道喜歡的山中滋味，慢慢吃、慢慢聊吧！",
     "price_items": [
-      {"name": "山林白切土雞（小）", "price": 300, "unit": "份"},
-      {"name": "炒小魚山蘇", "price": 160, "unit": "份"},
-      {"name": "香炒桂筍", "price": 180, "unit": "份"}
+      {
+        "name": "山林白切土雞（小）",
+        "price": 300,
+        "unit": "份"
+      },
+      {
+        "name": "炒小魚山蘇",
+        "price": 160,
+        "unit": "份"
+      },
+      {
+        "name": "香炒桂筍",
+        "price": 180,
+        "unit": "份"
+      }
     ],
     "currency": "TWD",
     "price_note": "參考2023-03-22食記中的歷史價格，非目前報價；餐點價格與份量請向店家確認。",
@@ -182,18 +330,744 @@
     "id": "merchant_010",
     "name": "湠火鍋",
     "category": "餐廳",
-    "tags": ["上巴陵", "火烤兩吃", "景觀餐廳"],
+    "tags": [
+      "上巴陵",
+      "火烤兩吃",
+      "景觀餐廳"
+    ],
     "address": "桃園市復興區華陵里10鄰巴崚111號",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區湠火鍋",
-    "description": "提供火鍋與炭烤搭配的套餐，搭配馬告等風味調味；用餐及牛骨麵供應請事先預約確認。",
+    "description": "火鍋還是炭烤，小朋友才做選擇？這裡有火烤二吃與馬告風味餐點。先看看套餐內容與服務費，記得詢問預約喔！",
     "price_items": [
-      {"name": "牛骨麵套餐（微辣）", "price": 280, "unit": "位"},
-      {"name": "火烤二吃經典套餐", "price": 580, "unit": "位"}
+      {
+        "name": "牛骨麵套餐（微辣）",
+        "price": 280,
+        "unit": "位"
+      },
+      {
+        "name": "火烤二吃經典套餐",
+        "price": 580,
+        "unit": "位"
+      }
     ],
     "currency": "TWD",
     "price_note": "參考2025-02-08食記的歷史價格。火烤套餐另加10%服務費，屬較高預算選擇；最新費用、套餐內容與預約方式請向店家確認。",
     "opening_hours_note": "營業時間及預約方式以店家最新公告為準。",
     "source_url": "https://tiffanylin66.pixnet.net/blog/posts/3051025648",
     "source_checked_on": "2026-10-09"
+  },
+  {
+    "id": "merchant_011",
+    "name": "雲莊渡假山莊",
+    "category": "民宿",
+    "tags": [
+      "拉拉山",
+      "雙人房",
+      "景觀住宿"
+    ],
+    "address": "桃園市復興區華陵村11鄰巴陵192-6號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=雲莊渡假山莊桃園市復興區",
+    "description": "把步調放慢，今晚看看山景吧！面山雙人套房含早餐；住宿動線有樓梯，有行動需求請先和業者聊聊。",
+    "price_items": [
+      {
+        "name": "景觀雙人房（平日）",
+        "price": 2200,
+        "unit": "房／晚"
+      },
+      {
+        "name": "景觀雙人房（假日）",
+        "price": 2800,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "官網雙人房參考價格，含早餐。平日為週日至週四及補班日；假日為週五、週六、國定假日及補假日。春節依官網定價計費。實際入住價格、加人費用與空房請向業者確認。",
+    "source_url": "https://www.lalasun.tw/in_room08.html",
+    "source_checked_on": "2026-10-10",
+    "source_kind": "official"
+  },
+  {
+    "id": "merchant_012",
+    "name": "拉拉山達觀農場",
+    "category": "民宿",
+    "tags": [
+      "拉拉山",
+      "上巴陵",
+      "雙人房"
+    ],
+    "address": "桃園市復興區上巴陵神木路189號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=拉拉山達觀農場桃園市復興區",
+    "description": "兩個人出遊，或揪朋友一起住山裡！這裡提供雙人到多人房型，先看看單床雙人套房的參考價吧。",
+    "price_items": [
+      {
+        "name": "二人套房單床（平日）",
+        "price": 2100,
+        "unit": "房／晚"
+      },
+      {
+        "name": "二人套房單床（假日）",
+        "price": 2600,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "官網二人套房單床房型參考價格，不是每人價格。平假日認定、特殊節日、餐食方案及實際入住價格與空房，請向業者確認。",
+    "source_url": "https://www.dkhotel.com.tw/room.html",
+    "source_checked_on": "2026-10-10",
+    "source_kind": "official"
+  },
+  {
+    "id": "merchant_013",
+    "name": "楓墅農莊",
+    "category": "民宿",
+    "tags": [
+      "拉拉山",
+      "景觀房",
+      "雙人房"
+    ],
+    "address": "桃園市復興區中心路145-5號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=楓墅農莊桃園市復興區",
+    "description": "喜歡木屋風格嗎？雙人景觀房有觀景窗與獨立衛浴，早餐也包含在住宿裡，吃飽再出發！",
+    "price_items": [
+      {
+        "name": "雙人景觀房（平日）",
+        "price": 3300,
+        "unit": "房／晚"
+      },
+      {
+        "name": "雙人景觀房（假日）",
+        "price": 4300,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "price_note": "依官網雙人景觀房頁面整理，含早餐。不同樓層與房型價格不同，櫻花季及特殊節日另有收費規則；實際房型、入住價格與空房請向業者確認。",
+    "source_url": "https://maple-lodge.okgo.tw/roomcontent.html?rid=1170",
+    "source_checked_on": "2026-10-10",
+    "source_kind": "official"
+  },
+  {
+    "id": "merchant_014",
+    "name": "俠雲山莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里中心一路9號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里中心一路9號俠雲山莊",
+    "description": "來山裡換個心情吧！這裡有一般客房與包棟木屋，喜歡花草的你也可以看看園區的季節風景。",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://xiayunvilla.com/room/",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_015",
+    "name": "侑德心悅",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里14鄰160-12號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里14鄰160-12號侑德心悅",
+    "description": "兩人小旅行，也能住得很有自己的節奏！先看看 A1 雙人套房，再挑選喜歡的樓層與房型吧。",
+    "price_items": [
+      {
+        "name": "A1一樓2人套房（平日）",
+        "price": 2500,
+        "unit": "房／晚"
+      },
+      {
+        "name": "A1一樓2人套房（假日）",
+        "price": 3000,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://www.xinyue.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_016",
+    "name": "福緣山莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里11鄰180-7號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里11鄰180-7號福緣山莊",
+    "description": "想把假期留給溪谷與木屋嗎？這裡有梨園、歐風與親水居房型，公共咖啡廳也能坐下歇歇腳。",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://www.fu-yam.com.tw/room",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_017",
+    "name": "谷點咖啡民宿",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里8鄰巴崚30號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里8鄰巴崚30號谷點咖啡民宿",
+    "description": "喜歡咖啡，也喜歡山裡的日常？把這裡放進住宿口袋名單，房型與餐食方案可以先向主人詢問喔。",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://www.goodian.com.tw/",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_018",
+    "name": "恩愛農場",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里上巴陵中心路143號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里上巴陵中心路143號恩愛農場",
+    "description": "早餐吃飽，再開始山中小旅行！精緻雙人房附早餐；想遇見櫻花的話，記得先查當季花況與房價喔。",
+    "price_items": [
+      {
+        "name": "精緻雙人房（平日）",
+        "price": 3000,
+        "unit": "房／晚"
+      },
+      {
+        "name": "精緻雙人房（假日）",
+        "price": 3500,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://www.ni-farm.com/rooms",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。平日為週日至週五、假日為週六；國定假日、春節、櫻花季及暑假週五至週日依定價計費。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_019",
+    "name": "溪景生態農莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵村11鄰180-2號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵村11鄰180-2號溪景生態農莊",
+    "description": "白雲居、山林居、溪景居，光看名字就想放慢腳步！提供雙人與多人房型，先挑適合同行人數的房間吧。",
+    "price_items": [
+      {
+        "name": "白雲居B一樓2人房（平日）",
+        "price": 2500,
+        "unit": "房／晚"
+      },
+      {
+        "name": "白雲居B一樓2人房（假日）",
+        "price": 3000,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://brookview.okgo.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_020",
+    "name": "桃山渡假農場",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區中心路110號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中心路110號桃山渡假農場",
+    "description": "兩人出遊選套房，朋友同行也能看看四人、六人木屋！把山中過夜加入行程，留點時間好好休息吧。",
+    "price_items": [
+      {
+        "name": "雙人套房（平日）",
+        "price": 2500,
+        "unit": "房／晚"
+      },
+      {
+        "name": "雙人套房（假日）",
+        "price": 3000,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://peach.okgo.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_021",
+    "name": "河那灣民宿",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區澤仁里3鄰溪口台41號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區澤仁里3鄰溪口台41號河那灣民宿",
+    "description": "想讓住宿多一點旅行回憶？這裡提供住宿與體驗活動資訊，出發前可以問問有哪些適合你的安排！",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://henawan.com/official-website/",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_022",
+    "name": "小烏來山莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區義盛里一鄰下宇內3-2號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區義盛里一鄰下宇內3-2號小烏來山莊",
+    "description": "想把山林和溪流景色留在窗外嗎？景觀雙人房附早餐，走訪小烏來後，回來歇歇腳剛剛好！",
+    "price_items": [
+      {
+        "name": "景觀雙人房（平日）",
+        "price": 3000,
+        "unit": "房／晚"
+      },
+      {
+        "name": "景觀雙人房（假日）",
+        "price": 3800,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://1971xanadu.com/portfolio-item/景觀雙人房/",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。景觀雙人房附早餐；國定連假另列4,000元／房／晚。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_023",
+    "name": "普拉多山丘假期",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區水管頭23-1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區水管頭23-1號普拉多山丘假期",
+    "description": "來場鄉村風的小假期吧！法式鄉村風格搭配庭園餐廳，喜歡悠閒氣氛的你可以先看看官網照片。",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://www.prado.com.tw/about",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_024",
+    "name": "琴莊景觀渡假山莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區巴崚172-3號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區巴崚172-3號琴莊景觀渡假山莊",
+    "description": "木屋、山景，還有自己的放空時間！位在卡拉部落，提供雙人與多人景觀木屋，適合慢慢挑選喜歡的房型。",
+    "price_items": [
+      {
+        "name": "2人景觀木屋套房（平日）",
+        "price": 2800,
+        "unit": "房／晚"
+      },
+      {
+        "name": "2人景觀木屋套房（假日）",
+        "price": 3500,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://www.lalaching.com.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_025",
+    "name": "拉拉山36號農場",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵村8鄰36號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵村8鄰36號拉拉山36號農場",
+    "description": "今晚想住哪一間？官網列有多款編號客房與八人房，揪伴出遊前先確認房型人數和入住方案吧！",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://36farm.okgo.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_026",
+    "name": "佳儂景觀休憩農場",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵村上巴陵中心路138之9號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵村上巴陵中心路138之9號佳儂景觀休憩農場",
+    "description": "兩人的小旅行，也可以很有儀式感！看看桃花源蜜月房，或和朋友一起挑選多人景觀房吧。",
+    "price_items": [
+      {
+        "name": "桃花源蜜月房（2人）（平日）",
+        "price": 3000,
+        "unit": "房／晚"
+      },
+      {
+        "name": "桃花源蜜月房（2人）（假日）",
+        "price": 3600,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://canon.ego.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_027",
+    "name": "山水奇異民宿",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區復興路三段530號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區復興路三段530號山水奇異民宿",
+    "description": "不用飛遠，也能感受紐西蘭風格！園區有哈比屋造景與景觀餐廳，先把喜歡的房型收藏起來吧。",
+    "price_items": [
+      {
+        "name": "奧克蘭201雙人房（平日）",
+        "price": 4600,
+        "unit": "房／晚"
+      },
+      {
+        "name": "奧克蘭201雙人房（假日）",
+        "price": 5500,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://kiwi.okgo.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_028",
+    "name": "雲享棧民宿",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里14鄰巴崚156-5號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里14鄰巴崚156-5號雲享棧民宿",
+    "description": "兩人同行，或整群朋友出發都能挑房型！這裡有雅房、套房與木屋；雅房的衛浴安排記得先確認喔。",
+    "price_items": [
+      {
+        "name": "雙人雅房（平日）",
+        "price": 2400,
+        "unit": "房／晚"
+      },
+      {
+        "name": "雙人雅房（假日）",
+        "price": 3000,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://ysz.ego.tw/room.html",
+    "source_kind": "official",
+    "information_checked_on": "2026-10-11",
+    "price_note": "官網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_029",
+    "name": "和風山莊",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里10鄰巴陵160號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里10鄰巴陵160號和風山莊",
+    "description": "想找個有庭園的山中落腳處？這裡提供雙人、四人與別墅房型，坐下來歇一會，再繼續你的山中旅程吧！",
+    "price_items": [
+      {
+        "name": "明月雙人客房（平日）",
+        "price": 2500,
+        "unit": "房／晚"
+      },
+      {
+        "name": "明月雙人客房（假日）",
+        "price": 3500,
+        "unit": "房／晚"
+      }
+    ],
+    "currency": "TWD",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/accommodation/detail/596",
+    "source_kind": "tourism",
+    "information_checked_on": "2026-10-11",
+    "price_note": "桃園觀光導覽網刊載的參考房價，非指定日期報價。平假日認定、節慶、餐食與加人費用，請在訂房時向業者確認。",
+    "source_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_030",
+    "name": "山是我家",
+    "category": "民宿",
+    "tags": [
+      "復興區",
+      "住宿"
+    ],
+    "address": "桃園市復興區華陵里14鄰巴崚143-6號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里14鄰巴崚143-6號山是我家",
+    "description": "把「山是我家」放進巴陵住宿口袋名單吧！想知道適合幾人入住，可以透過旅宿資訊頁的電話詢問房型。",
+    "price_items": [],
+    "currency": "TWD",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/accommodation/detail/2850",
+    "source_kind": "tourism",
+    "information_checked_on": "2026-10-11",
+    "price_note": "選好入住日期與人數，再透過下方連結查價或洽詢業者，確認適合你的住宿方案吧！目前未收錄可核對房型的固定房價。"
+  },
+  {
+    "id": "merchant_031",
+    "name": "瑞士鄉村農莊",
+    "category": "餐廳",
+    "tags": [
+      "景觀餐廳",
+      "在地食材"
+    ],
+    "address": "桃園市復興區復興路三段1028之2號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區復興路三段1028之2號瑞士鄉村農莊",
+    "description": "想讓風景陪你吃飯？這裡有山林視野，也把鱒魚、桂竹筍與季節水果運用在料理中。出發前先打電話預約，替自己留一段慢慢用餐的時間吧！",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 350～600 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/88",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_032",
+    "name": "納桑麻谷餐廳",
+    "category": "餐廳",
+    "tags": [
+      "泰雅風味",
+      "馬告",
+      "野菜"
+    ],
+    "address": "桃園市復興區華陵里7鄰20號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區華陵里7鄰20號納桑麻谷餐廳",
+    "description": "來一桌泰雅風味，替山中旅行加點香氣！馬告淋土雞、季節野菜與鹹豬肉拼盤都是官方介紹的招牌，先預約再來品嚐吧。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 150～300 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2060",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_033",
+    "name": "源元發飲食店",
+    "category": "餐廳",
+    "tags": [
+      "角板山",
+      "快炒",
+      "控肉"
+    ],
+    "address": "桃園市復興區中正路138號之1",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路138號之1源元發飲食店",
+    "description": "旅伴集合，開飯囉！角板山的這家餐館提供快炒與時節蔬菜，紅燒控肉、土雞和香菇都是可以一起分享的選擇。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 200～400 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/1818",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_034",
+    "name": "元發飲食店",
+    "category": "餐廳",
+    "tags": [
+      "角板山",
+      "控肉",
+      "山產"
+    ],
+    "address": "桃園市復興區澤仁里中山路13之1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區澤仁里中山路13之1號元發飲食店",
+    "description": "想找老店滋味？這裡的控肉是招牌，也有香菇料理、桂竹筍與清蒸鱒魚。想安排晚餐，記得提前和店家約好喔！",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 150～350 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2031",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_035",
+    "name": "春梅餐飲店",
+    "category": "餐廳",
+    "tags": [
+      "角板山",
+      "合菜",
+      "土雞"
+    ],
+    "address": "桃園市復興區中正路66號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路66號春梅餐飲店",
+    "description": "今天想點幾道家常菜一起吃？白斬土雞、炒山蘇、紅燒豆腐和養生菇湯都能列入口袋名單。單點或合菜，依同行人數慢慢挑吧！",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 130～350 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2038",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_036",
+    "name": "七號公路義式咖啡館",
+    "category": "餐廳",
+    "tags": [
+      "西式排餐",
+      "景觀餐廳"
+    ],
+    "address": "桃園市復興區詩朗32號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區詩朗32號七號公路義式咖啡館",
+    "description": "在北橫來一場小小的西式約會吧！這裡以排餐為主，有豬肋排、德國豬腳與香草雞排等選擇，也能欣賞山景。晚餐請先詢問預約。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 300～450 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/78",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_037",
+    "name": "復興土雞野菜小館",
+    "category": "餐廳",
+    "tags": [
+      "角板山",
+      "野菜",
+      "熱炒"
+    ],
+    "address": "桃園市復興區中正路111號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路111號復興土雞野菜小館",
+    "description": "蔬菜控也能找到喜歡的一餐！現炒青菜、炒生香菇，搭配脆皮油雞腿或溪蝦魚，和旅伴一起分著吃吧。當天野菜依店家供應為準。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 60～300 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2044",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_038",
+    "name": "台地平價小吃",
+    "category": "餐廳",
+    "tags": [
+      "角板山",
+      "熱炒",
+      "山產"
+    ],
+    "address": "桃園市復興區中正路132-1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路132-1號台地平價小吃",
+    "description": "想吃熱炒，也想來點酥香小菜？這裡有土雞、山產野菜、鹽酥杏鮑菇與溪蝦魚。點餐前先確認當天菜單，再挑你的心頭好！",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 60～250 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2032",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_039",
+    "name": "溢香早餐店",
+    "category": "餐廳",
+    "tags": [
+      "早餐",
+      "包子饅頭",
+      "麵食"
+    ],
+    "address": "桃園市復興區中正路11號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中正路11號溢香早餐店",
+    "description": "山中旅行，從吃早餐開始！這裡除了早點，也有榨菜肉絲麵與手工包子饅頭；手工品項限量，想吃記得先詢問供應喔。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載平均消費：約 20～70 元／人。此為預算參考區間，並非單道菜售價、套餐或即時報價；實際費用依點餐內容與店家公告為準。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/2033",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
+  },
+  {
+    "id": "merchant_040",
+    "name": "比雅山景觀咖啡座",
+    "category": "餐廳",
+    "tags": [
+      "景觀咖啡",
+      "簡餐",
+      "角板山"
+    ],
+    "address": "桃園市復興區中山路1號",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=桃園市復興區中山路1號比雅山景觀咖啡座",
+    "description": "走累了，坐下來看看溪谷吧！角板山公園台地邊緣的咖啡座提供簡餐、咖啡與飲品，替行程留一小段放空時間也很好。",
+    "price_items": [],
+    "currency": "TWD",
+    "price_note": "官方觀光頁刊載團體方案：會議茶點每人 200 元（20 人以上）、西點餐盒每人 120 元（10 人以上）。這是團體方案，非一般散客簡餐價格；餐點、預約及最終費用請向業者確認。",
+    "source_url": "https://travel.tycg.gov.tw/zh-tw/consume/detail/3222",
+    "source_kind": "tourism",
+    "source_checked_on": "2026-10-11",
+    "information_checked_on": "2026-10-11"
   }
 ]
