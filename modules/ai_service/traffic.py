@@ -128,15 +128,14 @@ def get_traffic_reply(text, *, data_path=None):
     if any(word in query for word in ROAD_KEYWORDS):
         return "\n".join(
             [
-                "復興區｜道路與開車資訊",
+                "🚗 復興開車小幫手",
                 "",
-                "出發前，請透過下方公路局連結"
-                "查看沿途最新路況與管制公告。",
+                "出發前先查沿途路況與管制公告 👇",
                 "",
-                "停車位請以停車場現場資訊為準；"
-                "實際通行請依現場指示及主管機關公告。",
+                "🅿️ 停車空位以現場為準。",
+                "⚠️ 是否可通行，請依最新公告與現場指示。",
                 "",
-                "公路局省道即時資訊：",
+                "🔎 公路局路況查詢",
                 ROAD_URL,
             ]
         )
@@ -166,48 +165,44 @@ def get_traffic_reply(text, *, data_path=None):
         )
     ]
 
-    lines = ["復興區｜交通參考", NOTICE]
+    lines = ["🚌 復興搭車小幫手"]
 
     if not matches:
         lines.extend(
             [
                 "",
-                "目前收錄角板山、小烏來與拉拉山的交通參考。",
-                "可輸入「怎麼去角板山」「小烏來公車」"
-                "或「拉拉山交通」。",
-                "其他目的地目前未提供專屬路線，"
-                "請至官方網站查詢。",
+                "📍 你想去哪裡？可以直接問：",
+                "・怎麼去角板山",
+                "・小烏來公車",
+                "・拉拉山交通",
+                "",
+                "其他目的地未提供專屬路線，可在下方公車網站查詢。",
             ]
         )
     elif len(matches) > 1:
         lines.extend(
             [
                 "",
-                "以下分別列出各地交通參考，"
-                "不是這些地點之間的轉乘規劃；"
-                "轉乘方式請依實際起訖站與班次確認。",
+                "📍 下面是各目的地的搭車參考，",
+                "不是這些地點之間的轉乘規劃。轉乘請再確認起訖站與班次。",
             ]
         )
 
     for entry in matches:
-        lines.append(f"\n【{entry['name']}】")
-        lines.extend(f"・{note}" for note in entry["notes"])
+        lines.append(f"\n📍【{entry['name']}】")
+        icons = ("🚏", "📅", "👣", "↩️")
+        lines.extend(f"{icons[index] if index < len(icons) else '・'} {note}" for index, note in enumerate(entry["notes"]))
         lines.append(
-            f"官方路線／交通說明：\n{entry['source_url']}"
+            f"\n🔗 路線與搭乘說明\n{entry['source_url']}"
         )
-        lines.append(f"資料查閱日期：{entry['checked_on']}")
 
     lines.extend(
         [
             "",
-            "查詢班次與公車動態：",
+            "⏰ 查班次／到站時間",
             BUS_URL,
             "",
-            "查詢省道路況：",
-            ROAD_URL,
-            "",
-            "實際行駛、票價及管制資訊"
-            "以主管機關與業者公告為準。",
+            "💡 先查回程，再安心出發！班次與票價以官方最新公告為準。",
         ]
     )
 
