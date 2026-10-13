@@ -5,7 +5,9 @@ from linebot.v3.messaging import (
     TemplateMessage,
     ButtonsTemplate,
     PostbackAction,
-    TextMessage
+    TextMessage,
+    FlexMessage,
+    FlexContainer
 )
 
 
@@ -18,6 +20,39 @@ def get_ai_reply(text, session_id=None):
     except Exception as e:
         print(f'get_reply error: {e}')
         return "系統暫時無法回答，請稍後再試一次。"
+
+
+def get_culture_messages():
+    # 4 號的文化模組：文化介紹卡片 + Quiz 題目卡片。
+    # import 放在函式裡面，它出錯時不會讓整個 Bot 壞掉
+    try:
+        from modules.culture.culture_flex import create_culture_flex
+        from modules.culture.quiz import create_quiz_flex
+
+        messages = []
+
+        culture_flex = create_culture_flex('culture001')
+        if culture_flex:
+            messages.append(
+                FlexMessage(
+                    alt_text='泰雅文化介紹',
+                    contents=FlexContainer.from_dict(culture_flex)
+                )
+            )
+
+        quiz_flex = create_quiz_flex('quiz001')
+        if quiz_flex:
+            messages.append(
+                FlexMessage(
+                    alt_text='泰雅文化知識挑戰',
+                    contents=FlexContainer.from_dict(quiz_flex)
+                )
+            )
+
+        return messages
+    except Exception as e:
+        print(f'culture error: {e}')
+        return []
 
 
 def handle_text_message(event, configuration):
@@ -59,8 +94,20 @@ def handle_text_message(event, configuration):
             # TODO: 2 號接手，改成呼叫 modules/attraction
 
         elif text == '泰雅文化':
-            reply_text = "泰雅文化介紹準備中"
-            # TODO: 4 號接手，改成呼叫 modules/culture
+            reply_text = "泰雅文化介紹暫時無法顯示，請稍後再試一次。"
+            culture_messages = get_culture_messages()
+
+            if culture_messages:
+                try:
+                    line_bot_api.reply_message(
+                        ReplyMessageRequest(
+                            reply_token=event.reply_token,
+                            messages=culture_messages
+                        )
+                    )
+                    return
+                except Exception as e:
+                    print(f'culture reply error: {e}')
 
         else:
             # 包含選單的「AI 問答」，以及所有其他文字（FAQ、天氣問答）
