@@ -9,12 +9,12 @@ from linebot.v3.messaging import (
 )
 
 
-def get_ai_reply(text):
+def get_ai_reply(text, session_id=None):
     # 5 號的 FAQ / 天氣模組。import 放在函式裡面，萬一它載入失敗，
     # 只有這個功能壞掉，不會讓整個 Bot 一起壞掉。
     try:
         from modules.ai_service import get_reply
-        return get_reply(text)
+        return get_reply(text, session_id=session_id)
     except Exception as e:
         print(f'get_reply error: {e}')
         return "系統暫時無法回答，請稍後再試一次。"
@@ -64,7 +64,12 @@ def handle_text_message(event, configuration):
 
         else:
             # 包含選單的「AI 問答」，以及所有其他文字（FAQ、天氣問答）
-            reply_text = get_ai_reply(text)
+            # 群組、聊天室與私人對話分開，同時區分每位使用者。
+            source = event.source
+            user_id = getattr(source, 'user_id', None)
+            scope = getattr(source, 'group_id', None) or getattr(source, 'room_id', None) or 'private'
+            session_id = f'{scope}:{user_id}' if user_id else None
+            reply_text = get_ai_reply(text, session_id=session_id)
 
         line_bot_api.reply_message(
             ReplyMessageRequest(

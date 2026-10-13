@@ -51,12 +51,17 @@ PENDING = {
 }
 
 
-def get_reply(text: str, *, faq_path=None) -> str:
+def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
     """回傳文字，由呼叫端負責傳送至 LINE。"""
     query = normalize(text)
 
     if len(text) > 2000:
         return "問題太長了，請縮短至 2000 字以內，並一次問一個問題。"
+
+    from .gemini_reply import clear_session, enabled, get_gemini_reply, has_session, is_planning
+    if query in {"重新開始", "清除對話", "結束規劃"}:
+        clear_session(session_id)
+        return "🌱 已清除這次對話，可以開始新的旅遊規劃了。"
 
     if not query or query in {
         "ai問答",
@@ -72,6 +77,13 @@ def get_reply(text: str, *, faq_path=None) -> str:
     emergency_reply = get_emergency_reply(text)
     if emergency_reply is not None:
         return emergency_reply
+
+    # 複合行程需求與後續討論，優先於餐廳、住宿等單一分類。
+    # 明確的即時查詢仍使用原有專門模組。
+    direct_queries = {"餐廳", "民宿", "推薦餐廳", "推薦民宿", "天氣", "復興區天氣", "緊急聯絡"}
+    urgent_road = any(word in query for word in ("封路", "道路管制", "通車", "路況"))
+    if enabled() and query not in direct_queries and not urgent_road and (is_planning(text) or has_session(session_id)):
+        return get_gemini_reply(text, session_id=session_id)
 
     intent = detect_intent(text)
 
@@ -165,4 +177,6 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if intent == "merchant":
         return get_merchant_reply("餐廳")
 
-    return PENDING.get(intent, FALLBACK)
+    if intent in PENDING:
+        return PENDING[intent]
+    return get_gemini_reply(text, session_id=session_id) or FALLBACK
