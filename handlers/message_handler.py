@@ -1,3 +1,5 @@
+import json
+
 from linebot.v3.messaging import (
     ApiClient,
     MessagingApi,
@@ -55,6 +57,29 @@ def get_culture_messages():
         return []
 
 
+def get_attraction_message():
+    # 2 號的景點導覽模組。import 放在函式裡面，它出錯時不會讓整個 Bot 壞掉。
+    # LINE 的 Flex 輪播最多 12 張，所以目前只取前 12 筆。
+    try:
+        from modules.attraction.attraction_service import get_all_attractions
+        from modules.attraction.flex_message import create_attraction_carousel
+
+        attractions = get_all_attractions()[:12]
+        if not attractions:
+            return None
+
+        carousel = create_attraction_carousel(attractions)
+        return FlexMessage(
+            alt_text='復興區景點導覽',
+            contents=FlexContainer.from_json(
+                json.dumps(carousel, ensure_ascii=False)
+            )
+        )
+    except Exception as e:
+        print(f'attraction error: {e}')
+        return None
+
+
 def handle_text_message(event, configuration):
     text = event.message.text
 
@@ -90,8 +115,20 @@ def handle_text_message(event, configuration):
             # TODO: 3 號接手，改成呼叫 modules/location
 
         elif text == '景點導覽':
-            reply_text = "景點導覽功能準備中"
-            # TODO: 2 號接手，改成呼叫 modules/attraction
+            reply_text = "景點導覽暫時無法顯示，請稍後再試一次。"
+            attraction_message = get_attraction_message()
+
+            if attraction_message:
+                try:
+                    line_bot_api.reply_message(
+                        ReplyMessageRequest(
+                            reply_token=event.reply_token,
+                            messages=[attraction_message]
+                        )
+                    )
+                    return
+                except Exception as e:
+                    print(f'attraction reply error: {e}')
 
         elif text == '泰雅文化':
             reply_text = "泰雅文化介紹暫時無法顯示，請稍後再試一次。"
