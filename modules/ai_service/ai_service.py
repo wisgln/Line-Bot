@@ -1,20 +1,22 @@
-"""提供 FAQ、天氣、商家與緊急聯絡資訊的統一入口。"""
+"""提供 FAQ、天氣、商家、緊急聯絡與交通資訊的統一入口。"""
 
 import logging
 
 from .emergency import get_emergency_reply
 from .faq import find_answer, load_faq
 from .intent import detect_intent, normalize
+from .traffic import get_traffic_reply
+from .local_products import get_local_products_reply
 
 logger = logging.getLogger(__name__)
 
 WELCOME = (
-    "你好！目前提供系統使用 FAQ、桃園市復興區天氣預報、"
-    "在地商家查詢與緊急聯絡資訊。"
-    "可以問我：需要下載 App 嗎？如何分享位置？"
-    "復興區天氣如何？推薦餐廳。"
-    "也可以輸入店家名稱查看特色、參考價格與地圖，"
-    "或輸入「緊急聯絡」查看求助電話。"
+    "你好！目前提供系統使用 FAQ、復興區天氣預報、"
+    "商家查詢、農特產介紹、緊急聯絡與交通資訊。"
+    "可以問我：需要下載 App 嗎？"
+    "復興區天氣如何？肚子餓了，有什麼能吃？"
+    "拉拉山要搭什麼車？"
+    "也可以輸入店家名稱、「復興有什麼農特產？」或「緊急聯絡」。"
 )
 
 FALLBACK = (
@@ -22,14 +24,17 @@ FALLBACK = (
     "或輸入「使用說明」查看可用內容。"
 )
 
+NEARBY_REPLY = (
+    "附近推薦需要你的位置，並由定位模組計算距離。"
+    "這項功能待整合後提供；目前可先輸入"
+    "「推薦餐廳」或「民宿」查看已收錄資料。"
+    "這些清單不代表距離你最近的商家。"
+)
+
 PENDING = {
     "opening_hours": (
         "目前尚未接入景點營業時間資料，無法確認開放時間；"
         "出發前請查閱該景點官方公告。"
-    ),
-    "traffic": (
-        "交通服務尚未串接，目前無法確認班次或即時路況；"
-        "出發前請查閱交通主管機關或業者公告。"
     ),
     "merchant": (
         "目前提供商家資料查詢，尚未提供優惠券服務。"
@@ -46,17 +51,17 @@ PENDING = {
 }
 
 
-def get_reply(text: str, *, faq_path=None) -> str:
-    """回傳回答文字，由呼叫端負責傳送到 LINE。
-
-    FAQ、商家與緊急聯絡查詢讀取本機 JSON。
-    天氣查詢需要 WEATHER_API_KEY。
-    本系統不會代為報案。
-    """
+def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
+    """回傳文字，由呼叫端負責傳送至 LINE。"""
     query = normalize(text)
 
     if len(text) > 2000:
         return "問題太長了，請縮短至 2000 字以內，並一次問一個問題。"
+
+    from .gemini_reply import clear_session, enabled, get_gemini_reply, has_session, is_planning
+    if query in {"重新開始", "清除對話", "結束規劃"}:
+        clear_session(session_id)
+        return "🌱 已清除這次對話，可以開始新的旅遊規劃了。"
 
     if not query or query in {
         "ai問答",
@@ -68,10 +73,27 @@ def get_reply(text: str, *, faq_path=None) -> str:
     }:
         return WELCOME
 
-    # 緊急資訊優先，避免被天氣、店名或 FAQ 攔截。
+    # 緊急聯絡優先於其他查詢。
     emergency_reply = get_emergency_reply(text)
     if emergency_reply is not None:
         return emergency_reply
+
+    # 複合行程需求與後續討論，優先於餐廳、住宿等單一分類。
+    # 明確的即時查詢仍使用原有專門模組。
+    direct_queries = {"餐廳", "民宿", "推薦餐廳", "推薦民宿", "天氣", "復興區天氣", "緊急聯絡"}
+    urgent_road = any(word in query for word in ("封路", "道路管制", "通車", "路況"))
+    if enabled() and query not in direct_queries and not urgent_road and (is_planning(text) or has_session(session_id)):
+        return get_gemini_reply(text, session_id=session_id)
+
+    intent = detect_intent(text)
+
+    traffic_reply = get_traffic_reply(text)
+    if traffic_reply is not None:
+        return traffic_reply
+
+    # 新交通問法保留原問題中的地名。
+    if intent == "traffic":
+        return get_traffic_reply(f"交通 {text}")
 
     try:
         answer = find_answer(text, load_faq(faq_path))
@@ -82,26 +104,44 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if answer is not None:
         return answer
 
-    intent = detect_intent(text)
-
     if intent == "weather":
         from modules.weather.weather_service import get_weather_reply
 
         return get_weather_reply()
+
+    # 尚未整合定位，不把全部商家當成附近推薦。
+    if intent == "nearby_merchant":
+        return NEARBY_REPLY
+
+    # 避免用商家介紹冒充優惠券資訊。
+    if "優惠券" in query:
+        return PENDING["merchant"]
 
     from modules.merchant.merchant_service import (
         get_merchant_reply,
         load_merchants,
     )
 
-    # 先比對店名，避免店名中的「泰雅」被當成文化問題。
     try:
         merchants = load_merchants()
     except (OSError, ValueError):
         logger.exception("Unable to load merchant data")
         merchants = []
 
+    # 分類詞本身不能被含有「民宿」的店名攔截。
+    if query in {"民宿", "住宿", "推薦民宿"}:
+        return get_merchant_reply("民宿")
+
+    if query in {"餐廳", "推薦餐廳", "找餐廳", "美食", "推薦美食"}:
+        return get_merchant_reply("餐廳")
+
+    for merchant in merchants:
+        if normalize(merchant["name"]) == query:
+            return get_merchant_reply(merchant["name"])
+
+    # 店名優先，避免「泰雅」等字詞被當成文化問題。
     matched_names = []
+
     for merchant in merchants:
         name = normalize(merchant["name"])
         if name in query or (len(query) >= 2 and query in name):
@@ -115,9 +155,12 @@ def get_reply(text: str, *, faq_path=None) -> str:
         lines.extend(f"・{name}" for name in matched_names[:10])
         return "\n".join(lines)
 
-    if "優惠券" in query:
-        return PENDING["merchant"]
+    # 完整店名優先；一般農產問題轉到資料介紹。
+    product_reply = get_local_products_reply(text)
+    if product_reply is not None:
+        return product_reply
 
+    # 保留原本的明確分類查詢。
     if any(word in query for word in ("餐廳", "美食")):
         return get_merchant_reply("餐廳")
 
@@ -127,4 +170,13 @@ def get_reply(text: str, *, faq_path=None) -> str:
     if "商家" in query:
         return get_merchant_reply("商家")
 
-    return PENDING.get(intent, FALLBACK)
+    # 自然問法轉成商家模組支援的分類。
+    if intent == "lodging":
+        return get_merchant_reply("民宿")
+
+    if intent == "merchant":
+        return get_merchant_reply("餐廳")
+
+    if intent in PENDING:
+        return PENDING[intent]
+    return get_gemini_reply(text, session_id=session_id) or FALLBACK
