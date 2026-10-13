@@ -6,10 +6,40 @@ from linebot.v3.messaging import (
 )
 
 
+def get_quiz_reply(data):
+    # data 格式：culture_quiz:題目ID:選項，例如 culture_quiz:quiz001:B
+    parts = data.split(':')
+    if len(parts) != 3:
+        return "收不到這個答案，請再試一次。"
+
+    _, quiz_id, user_answer = parts
+
+    # 4 號的模組。import 放在函式裡面，它出錯時不會讓整個 Bot 壞掉
+    from modules.culture.quiz import check_quiz_answer
+    result = check_quiz_answer(quiz_id, user_answer)
+
+    lines = [result["message"]]
+
+    if not result["correct"] and result.get("correct_answer"):
+        lines.append(f"正確答案是 {result['correct_answer']}")
+
+    if result.get("explanation"):
+        lines.append(f"\n💡 {result['explanation']}")
+
+    return "\n".join(lines)
+
+
 def handle_postback_event(event, configuration):
     data = event.postback.data
 
-    if data == 'menu_nearby':
+    if data.startswith('culture_quiz:'):
+        try:
+            reply_text = get_quiz_reply(data)
+        except Exception as e:
+            print(f'culture quiz error: {e}')
+            reply_text = "題目暫時無法判斷，請稍後再試一次。"
+
+    elif data == 'menu_nearby':
         reply_text = "請傳送你的目前位置，我幫你找附近景點！"
         # TODO: 3 號之後可能改成直接觸發 LINE 的位置分享請求
 
