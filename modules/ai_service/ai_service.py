@@ -7,12 +7,13 @@ from .faq import find_answer, load_faq
 from .intent import detect_intent, normalize
 from .traffic import get_traffic_reply
 from .local_products import get_local_products_reply
+from .events import get_events_reply
 
 logger = logging.getLogger(__name__)
 
 WELCOME = (
     "你好！目前提供系統使用 FAQ、復興區天氣預報、"
-    "商家查詢、農特產介紹、緊急聯絡與交通資訊。"
+    "商家查詢、農特產介紹、活動資訊、緊急聯絡與交通資訊。"
     "可以問我：需要下載 App 嗎？"
     "復興區天氣如何？肚子餓了，有什麼能吃？"
     "拉拉山要搭什麼車？"
@@ -77,6 +78,10 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
     emergency_reply = get_emergency_reply(text)
     if emergency_reply is not None:
         return emergency_reply
+
+    events_reply = get_events_reply(text)
+    if events_reply is not None:
+        return events_reply
 
     # 複合行程需求與後續討論，優先於餐廳、住宿等單一分類。
     # 明確的即時查詢仍使用原有專門模組。
