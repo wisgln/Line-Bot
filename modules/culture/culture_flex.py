@@ -45,3 +45,58 @@ def create_culture_flex(culture_id):
             ]
         }
     }
+
+from modules.culture.culture_service import load_culture_data
+
+
+def create_culture_menu():
+    """建立泰雅文化主題選單。"""
+
+    cultures = load_culture_data()
+
+    buttons = []
+
+    for culture in cultures:
+        buttons.append({
+            "type": "button",
+            "style": "secondary",
+            "height": "sm",
+            "action": {
+                "type": "postback",
+                "label": culture["title"],
+                "data": f"culture_view:{culture['id']}",
+                "displayText": f"我想了解{culture['title']}"
+            }
+        })
+
+    return {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "md",
+            "contents": [
+                {
+                    "type": "text",
+                    "text": "泰雅文化探索",
+                    "weight": "bold",
+                    "size": "xl",
+                    "wrap": True
+                },
+                {
+                    "type": "text",
+                    "text": "選擇想認識的泰雅文化主題",
+                    "size": "sm",
+                    "wrap": True,
+                    "color": "#777777"
+                }
+            ]
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "sm",
+            "contents": buttons
+        }
+    }
