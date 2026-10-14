@@ -26,7 +26,7 @@ def get_ai_reply(text, session_id=None):
 
         return get_reply(text, session_id=session_id)
     except Exception:
-        logger.error("AI reply failed")
+        logger.exception("AI reply failed")
         return "🌿 暫時無法回答，請稍後再試一次。"
 
 
@@ -58,7 +58,7 @@ def get_culture_messages():
 
         return messages
     except Exception:
-        logger.error("Culture cards failed")
+        logger.exception("Culture cards failed")
         return []
 
 
@@ -83,7 +83,7 @@ def get_attraction_message():
             contents=FlexContainer.from_dict(carousel),
         )
     except Exception:
-        logger.error("Attraction carousel failed")
+        logger.exception("Attraction carousel failed")
         return None
 
 
@@ -230,7 +230,7 @@ def get_named_attraction_message(text):
         )
 
     except Exception:
-        logger.error("Named attraction card failed")
+        logger.exception("Named attraction card failed")
         return None
 
 
