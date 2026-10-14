@@ -157,3 +157,116 @@ def create_quiz_flex(quiz_id):
             "contents": buttons
         }
     }
+
+def get_next_quiz_id(current_quiz_id):
+    """取得下一題 ID；最後一題回傳 None。"""
+
+    quiz_ids = [quiz["id"] for quiz in QUIZ_QUESTIONS]
+
+    if current_quiz_id not in quiz_ids:
+        return None
+
+    current_index = quiz_ids.index(current_quiz_id)
+    next_index = current_index + 1
+
+    if next_index >= len(quiz_ids):
+        return None
+
+    return quiz_ids[next_index]
+
+def create_next_quiz_button(current_quiz_id):
+    """建立下一題或完成測驗的 LINE 按鈕。"""
+
+    next_id = get_next_quiz_id(current_quiz_id)
+
+    if next_id is None:
+        return {
+            "type": "button",
+            "style": "primary",
+            "action": {
+                "type": "postback",
+                "label": "挑戰完成",
+                "data": "menu_culture",
+                "displayText": "返回泰雅文化探索"
+            }
+        }
+
+    return {
+        "type": "button",
+        "style": "primary",
+        "action": {
+            "type": "postback",
+            "label": "下一題",
+            "data": f"culture_quiz_next:{next_id}",
+            "displayText": "繼續挑戰下一題"
+        }
+    }
+
+def create_quiz_result_flex(quiz_id, user_answer):
+    """建立 Quiz 答題結果與下一題按鈕。"""
+
+    quiz = get_quiz_question(quiz_id)
+    if quiz is None:
+        return None
+
+    result = check_quiz_answer(quiz_id, user_answer)
+
+    if "correct_answer" not in result:
+        return None
+
+    is_correct = result["correct"]
+
+    title = "🎉 答對了！" if is_correct else "💡 答錯了！"
+
+    correct_answer = result["correct_answer"]
+    answer_text = quiz["options"][correct_answer]
+
+    return {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "md",
+            "contents": [
+                {
+                    "type": "text",
+                    "text": title,
+                    "weight": "bold",
+                    "size": "xl",
+                    "color": "#256D5B"
+                },
+                {
+                    "type": "text",
+                    "text": quiz["question"],
+                    "wrap": True,
+                    "size": "md"
+                },
+                {
+                    "type": "separator",
+                    "margin": "md"
+                },
+                {
+                    "type": "text",
+                    "text": f"正確答案：{correct_answer}. {answer_text}",
+                    "weight": "bold",
+                    "wrap": True,
+                    "size": "md"
+                },
+                {
+                    "type": "text",
+                    "text": result["explanation"],
+                    "wrap": True,
+                    "size": "sm",
+                    "color": "#666666"
+                }
+            ]
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                create_next_quiz_button(quiz_id)
+            ]
+        }
+    }
