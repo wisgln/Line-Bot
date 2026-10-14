@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 
 from .openai_reply import build_context
 from .attraction_context import load_attraction_context
+from .events import event_context
 
 _sessions = OrderedDict()
 _lock = RLock()
@@ -29,6 +30,7 @@ attractions 是共用景點候選資料，可依名稱、簡介搭配商家提�
 不得推測無障礙、停車或適合輪椅。長輩小孩需求應追問步行限制，缺少設施資訊時標註待確認。
 後續修改行程保留已知條件；新資料優先於舊對話，不能重複舊回答中沒有資料支持的斷言。
 沒有即時天氣、空房、庫存與訂位能力，不得宣稱已查詢即時資訊或已完成預訂。
+活動只能引用 events 的當次資料，舊對話的過期活動不得推薦；公告期間不代表指定日期有場次，需向主辦方確認。
 輸出是 LINE 純文字，不要使用 Markdown：不用星號粗體、井字號標題、分隔線（---）或 [文字](網址) 的連結寫法；列點用「1.」「2.」或「・」開頭，網址直接寫出。
 只使用提供的歷史，遺失的條件請詢問。回覆約800中文字以內。'''
 
@@ -103,6 +105,7 @@ def get_gemini_reply(text, *, session_id=None):
             try:
                 context = build_context()
                 context['attractions'] = load_attraction_context()
+                context['events'] = event_context()
             except (OSError, ValueError):
                 return '🌿 本機旅遊參考資料讀取失敗（LOCAL_DATA）。尚未發送 AI 請求。'
             payload = {

@@ -39,6 +39,9 @@ class FAQTests(unittest.TestCase):
             with self.subTest(question=question):
                 self.assertIn("目前", get_reply(question))
 
+    def test_bus_information_is_available(self):
+        self.assertIn("https://ebus.tycg.gov.tw/ebus", get_reply("公車班次"))
+
     def test_weather_routing(self):
         fake_reply = "桃園市復興區｜測試用天氣預報"
 
