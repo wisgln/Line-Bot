@@ -10,10 +10,26 @@ def create_culture_flex(culture_id):
     if culture is None:
         return None
 
+   
+    image_url = culture.get("image_url", "").strip()
+
+    hero = None
+
+    if image_url.startswith("https://"):
+        hero = {
+            "type": "image",
+            "url": image_url,
+            "size": "full",
+            "aspectRatio": "20:13",
+            "aspectMode": "cover"
+        }
+
     return {
         "type": "bubble",
         "size": "mega",
+        **({"hero": hero} if hero else {}),
         "body": {
+
             "type": "box",
             "layout": "vertical",
             "spacing": "md",
