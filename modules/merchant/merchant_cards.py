@@ -275,7 +275,10 @@ def create_merchant_bubble(merchant):
         )
     ]
 
-    map_button = uri_button("📍 查看地圖", merchant.get("maps_url"))
+    map_url = safe_url(merchant.get("maps_url"))
+    if not map_url:
+        map_url = "https://www.google.com/maps/search/?api=1&query=" + quote(merchant["name"] + " " + merchant.get("address", ""))
+    map_button = uri_button("📍 Google Maps", map_url)
     if map_button:
         buttons.append(map_button)
 
