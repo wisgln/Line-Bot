@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import re
 
 
@@ -31,7 +31,8 @@ def get_opening_status(opening_hours, now=None):
     if not opening_hours:
         return "⚪ 營業時間未提供"
 
-    now = now or datetime.now()
+    TAIWAN_TIMEZONE = timezone(timedelta(hours=8))
+    now = now or datetime.now(TAIWAN_TIMEZONE)
     text = str(opening_hours).strip()
 
     # 沒有固定營業時間

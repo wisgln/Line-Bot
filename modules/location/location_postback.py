@@ -39,11 +39,12 @@ def handle_location_filter(data):
     selected_category = None if category == "all" else category
 
     nearby = find_nearby_attractions(
-        latitude,
-        longitude,
-        limit=5,
-        category=selected_category
-    )
+    latitude,
+    longitude,
+    limit=5,
+    category=selected_category,
+    smart_rank=True
+)
 
     if not nearby:
         return TextMessage(

@@ -17,10 +17,11 @@ def handle_location_message(event, configuration):
     longitude = event.message.longitude
 
     nearby = find_nearby_attractions(
-        latitude,
-        longitude,
-        limit=5
-    )
+    latitude,
+    longitude,
+    limit=5,
+    smart_rank=True
+)
 
     if not nearby:
         messages = [
