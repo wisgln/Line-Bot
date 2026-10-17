@@ -48,7 +48,8 @@ def handle_location_filter(data):
         latitude,
         longitude,
         limit=5,
-        category=selected_category
+        category=selected_category,
+        smart_rank=True
     )
 
     if not nearby:

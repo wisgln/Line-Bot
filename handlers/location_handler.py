@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 def get_nearby(latitude, longitude):
     """
     取得附近景點。
+    使用智慧推薦排序。
     發生錯誤時回傳 None，避免整個 Bot 掛掉。
     """
     try:
@@ -27,6 +28,7 @@ def get_nearby(latitude, longitude):
             latitude,
             longitude,
             limit=5,
+            smart_rank=True,
         )
 
     except Exception:
@@ -54,8 +56,6 @@ def make_carousel_message(
         if not carousel:
             return None
 
-        # Quick Reply 如果失敗，
-        # 仍然讓景點 Carousel 可以正常顯示
         quick_reply = None
 
         try:
@@ -145,7 +145,6 @@ def handle_location_message(
         longitude,
     )
 
-    # 查詢本身發生錯誤
     if nearby is None:
         messages = [
             TextMessage(
@@ -156,7 +155,6 @@ def handle_location_message(
             )
         ]
 
-    # 查詢成功，但沒有資料
     elif not nearby:
         messages = [
             TextMessage(
@@ -168,14 +166,12 @@ def handle_location_message(
         ]
 
     else:
-        # 優先使用 Flex Carousel
         message = make_carousel_message(
             nearby,
             latitude,
             longitude,
         )
 
-        # Carousel 建立失敗時使用文字備案
         if message is None:
             try:
                 message = make_text_message(
@@ -213,8 +209,6 @@ def handle_location_message(
             )
 
         except Exception:
-            # 如果 Flex Message 被 LINE 拒絕，
-            # 再嘗試用純文字回覆
             logger.exception(
                 "Nearby reply failed"
             )
