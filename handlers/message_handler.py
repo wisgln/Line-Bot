@@ -31,30 +31,24 @@ def get_ai_reply(text, session_id=None):
 
 
 def get_culture_messages():
-    """保留文化介紹與 Quiz 字卡。"""
+    """泰雅文化主題選單，加上第一題 Quiz。"""
     try:
         from modules.culture.culture_flex import create_culture_menu
         from modules.culture.quiz import create_quiz_flex
 
         messages = []
 
-        culture_flex = create_culture_flex("")
-        if culture_flex:
-            messages.append(
-                FlexMessage(
-                    alt_text="泰雅文化探索",
-                    contents=FlexContainer.from_dict(culture_flex),
+        for data, title in (
+            (create_culture_menu(), "泰雅文化探索"),
+            (create_quiz_flex("quiz001"), "泰雅文化知識挑戰"),
+        ):
+            if data:
+                messages.append(
+                    FlexMessage(
+                        alt_text=title,
+                        contents=FlexContainer.from_dict(data),
+                    )
                 )
-            )
-
-        quiz_flex = create_quiz_flex("quiz001")
-        if quiz_flex:
-            messages.append(
-                FlexMessage(
-                    alt_text="泰雅文化知識挑戰",
-                    contents=FlexContainer.from_dict(quiz_flex),
-                )
-            )
 
         return messages
     except Exception:
