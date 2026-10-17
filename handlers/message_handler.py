@@ -1,6 +1,7 @@
-"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
+"""文字訊息、商家字卡、景點字卡、行程站次與文化功能。"""
 
 import logging
+import re
 import unicodedata
 
 from linebot.v3.messaging import (
@@ -20,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_ai_reply(text, session_id=None):
-    """延後載入，避免單一模組異常影響整個 Bot。"""
     try:
         from modules.ai_service import get_reply
 
@@ -31,30 +31,23 @@ def get_ai_reply(text, session_id=None):
 
 
 def get_culture_messages():
-    """保留文化介紹與 Quiz 字卡。"""
     try:
         from modules.culture.culture_flex import create_culture_flex
         from modules.culture.quiz import create_quiz_flex
 
         messages = []
 
-        culture_flex = create_culture_flex("culture001")
-        if culture_flex:
-            messages.append(
-                FlexMessage(
-                    alt_text="泰雅文化介紹",
-                    contents=FlexContainer.from_dict(culture_flex),
+        for data, title in (
+            (create_culture_flex("culture001"), "泰雅文化介紹"),
+            (create_quiz_flex("quiz001"), "泰雅文化知識挑戰"),
+        ):
+            if data:
+                messages.append(
+                    FlexMessage(
+                        alt_text=title,
+                        contents=FlexContainer.from_dict(data),
+                    )
                 )
-            )
-
-        quiz_flex = create_quiz_flex("quiz001")
-        if quiz_flex:
-            messages.append(
-                FlexMessage(
-                    alt_text="泰雅文化知識挑戰",
-                    contents=FlexContainer.from_dict(quiz_flex),
-                )
-            )
 
         return messages
     except Exception:
@@ -62,25 +55,31 @@ def get_culture_messages():
         return []
 
 
+def make_attraction_message(attraction):
+    from modules.attraction.flex_message import create_attraction_bubble
+
+    return FlexMessage(
+        alt_text=f"景點介紹｜{attraction['name']}"[:100],
+        contents=FlexContainer.from_dict(
+            create_attraction_bubble(attraction)
+        ),
+    )
+
+
 def get_attraction_message():
-    """保留原有景點導覽，顯示前 12 張卡片。"""
     try:
-        from modules.attraction.attraction_service import (
-            get_all_attractions,
-        )
-        from modules.attraction.flex_message import (
-            create_attraction_carousel,
-        )
+        from modules.attraction.attraction_service import get_all_attractions
+        from modules.attraction.flex_message import create_attraction_carousel
 
         attractions = get_all_attractions()[:12]
         if not attractions:
             return None
 
-        carousel = create_attraction_carousel(attractions)
-
         return FlexMessage(
             alt_text="復興區景點導覽",
-            contents=FlexContainer.from_dict(carousel),
+            contents=FlexContainer.from_dict(
+                create_attraction_carousel(attractions)
+            ),
         )
     except Exception:
         logger.exception("Attraction carousel failed")
@@ -88,7 +87,6 @@ def get_attraction_message():
 
 
 def normalize_card_query(text):
-    """統一全半形、空白與標點，供景點名稱比對。"""
     return "".join(
         char
         for char in unicodedata.normalize("NFKC", text).casefold()
@@ -98,46 +96,21 @@ def normalize_card_query(text):
 
 
 def extract_attraction_keyword(text):
-    """只接受簡短景點查詢，避免攔截行程或其他完整問題。"""
     query = normalize_card_query(text)
 
-    prefixes = (
-        "可以介紹一下",
-        "可以介紹",
-        "請介紹一下",
-        "幫我介紹",
-        "我想了解",
-        "我想看",
-        "介紹一下",
-        "請介紹",
-        "介紹",
-        "查詢",
-        "查看",
-        "看看",
-        "看",
-    )
-
-    suffixes = (
-        "的詳細介紹",
-        "的介紹",
-        "的字卡",
-        "的卡片",
-        "的地圖",
-        "的導航",
-        "詳細介紹",
-        "介紹",
-        "字卡",
-        "卡片",
-        "地圖",
-        "導航",
-    )
-
-    for prefix in prefixes:
+    for prefix in (
+        "可以介紹一下", "可以介紹", "請介紹一下", "幫我介紹",
+        "我想了解", "我想看", "介紹一下", "請介紹",
+        "介紹", "查詢", "查看", "看看", "看",
+    ):
         if query.startswith(prefix):
             query = query[len(prefix):]
             break
 
-    for suffix in suffixes:
+    for suffix in (
+        "的詳細介紹", "的介紹", "的字卡", "的卡片", "的地圖",
+        "的導航", "詳細介紹", "介紹", "字卡", "卡片", "地圖", "導航",
+    ):
         if query.endswith(suffix):
             query = query[:-len(suffix)]
             break
@@ -146,67 +119,40 @@ def extract_attraction_keyword(text):
 
 
 def get_named_attraction_message(text):
-    """明確查詢景點名稱時回傳字卡；其他問題交回 AI 入口。"""
     try:
-        from modules.attraction.attraction_service import (
-            get_all_attractions,
-        )
-        from modules.attraction.flex_message import (
-            create_attraction_bubble,
-        )
+        from modules.attraction.attraction_service import get_all_attractions
+        from modules.ai_service.emergency import get_emergency_reply
+        from modules.ai_service.gemini_reply import is_planning
 
-        attractions = get_all_attractions()
-        if not isinstance(attractions, list):
+        if get_emergency_reply(text) is not None or is_planning(text):
             return None
 
         attractions = [
-            item
-            for item in attractions
+            item for item in get_all_attractions()
             if isinstance(item, dict)
             and isinstance(item.get("name"), str)
             and item["name"].strip()
         ]
 
         query = normalize_card_query(text)
-
-        # 完整店名先比對，不需要猜測使用者意圖。
-        exact_matches = [
-            item
-            for item in attractions
+        matches = [
+            item for item in attractions
             if normalize_card_query(item["name"]) == query
         ]
 
-        if exact_matches:
-            matches = exact_matches
-        else:
-            # 景點名稱可能出現在求救、交通或行程問題中。
-            # 這些問題應由統一入口處理，不直接回字卡。
-            from modules.ai_service.emergency import get_emergency_reply
-            from modules.ai_service.gemini_reply import is_planning
-
-            if get_emergency_reply(text) is not None:
-                return None
-
-            if is_planning(text):
-                return None
-
+        if not matches:
             keyword = extract_attraction_keyword(text)
-
             if len(keyword) < 2:
                 return None
 
-            # 移除「介紹」「地圖」等外層用語後，
-            # 剩餘文字必須能直接對應景點名稱。
             matches = [
-                item
-                for item in attractions
+                item for item in attractions
                 if normalize_card_query(item["name"]) == keyword
             ]
 
             if not matches:
                 matches = [
-                    item
-                    for item in attractions
+                    item for item in attractions
                     if keyword in normalize_card_query(item["name"])
                 ]
 
@@ -218,24 +164,122 @@ def get_named_attraction_message(text):
             lines = ["📍 找到幾個符合的景點：", ""]
             lines.extend(f"・{name}" for name in names[:8])
             lines.extend(["", "請輸入完整景點名稱，我幫你開啟字卡。"])
-
             return TextMessage(text="\n".join(lines))
 
-        attraction = matches[0]
-        bubble = create_attraction_bubble(attraction)
-
-        return FlexMessage(
-            alt_text=f"景點介紹｜{attraction['name']}"[:100],
-            contents=FlexContainer.from_dict(bubble),
-        )
+        return make_attraction_message(matches[0])
 
     except Exception:
         logger.exception("Named attraction card failed")
         return None
 
 
+def get_merchant_card_message(text):
+    """商家選單、分類、翻頁和完整店名字卡。"""
+    try:
+        from modules.ai_service.emergency import get_emergency_reply
+        from modules.merchant.merchant_cards import get_merchant_message
+
+        # 求救問題交由原本的緊急聯絡模組優先處理。
+        if get_emergency_reply(text) is not None:
+            return None
+
+        return get_merchant_message(text)
+
+    except Exception:
+        logger.error("Merchant cards failed")
+        # 字卡失敗時，交回原本的文字查詢。
+        return None
+
+
+def parse_stop_number(text):
+    """只辨識查看指令，不攔截『第二站換掉』或求救問題。"""
+    query = normalize_card_query(text)
+    match = re.fullmatch(
+        r"(?:請幫我看|幫我看|請查看|請看|我想看|查看|看看|看)?"
+        r"第([0-9]{1,2}|[一二三四五六七八九十兩]{1,3})站"
+        r"(?:的)?(?:詳情|介紹|字卡|卡片|地圖|導航)?",
+        query,
+    )
+
+    if not match:
+        return None
+
+    value = match.group(1)
+    numbers = {
+        "一": 1,
+        "二": 2,
+        "兩": 2,
+        "三": 3,
+        "四": 4,
+        "五": 5,
+        "六": 6,
+        "七": 7,
+        "八": 8,
+        "九": 9,
+        "十": 10,
+        "十一": 11,
+        "十二": 12,
+    }
+
+    return int(value) if value.isdigit() else numbers.get(value)
+
+
+def get_itinerary_message(text, session_id):
+    """依已保存的行程順序，顯示指定站次的景點字卡。"""
+    number = parse_stop_number(text)
+    if number is None:
+        return None
+
+    try:
+        from modules.ai_service.gemini_reply import get_saved_stops
+        from modules.attraction.attraction_service import get_all_attractions
+
+        stops = get_saved_stops(session_id)
+
+        if not stops:
+            return TextMessage(
+                text=(
+                    "🌿 目前沒有可查看的行程，或對話記憶已過期。\n"
+                    "請先安排新行程，也可以直接輸入景點名稱。"
+                )
+            )
+
+        if not 1 <= number <= len(stops):
+            return TextMessage(
+                text=f"📍 目前行程共有{len(stops)}站，請選擇其中一站。"
+            )
+
+        stop = stops[number - 1]
+
+        if stop["kind"] != "attraction":
+            lines = [f"📍 第{number}站｜{stop['name']}"]
+            if stop.get("note"):
+                lines.append(stop["note"])
+            lines.append("這站是用餐、住宿或其他安排，沒有景點字卡。")
+            return TextMessage(text="\n".join(lines))
+
+        matches = [
+            item for item in get_all_attractions()
+            if isinstance(item, dict)
+            and str(item.get("id")) == stop["id"]
+        ]
+
+        # 名稱改變或 id 重複時，不開啟可能對錯店家的卡片。
+        if len(matches) != 1 or matches[0].get("name") != stop["name"]:
+            return TextMessage(
+                text="🌿 這站的景點資料已異動，請重新查詢景點或調整行程。"
+            )
+
+        return make_attraction_message(matches[0])
+
+    except Exception:
+        logger.error("Itinerary card failed")
+        return TextMessage(
+            text="🌿 這站的資料暫時無法顯示，請稍後再試。"
+        )
+
+
 def get_session_id(event):
-    """區分私人、群組、聊天室及使用者。"""
     source = event.source
     user_id = getattr(source, "user_id", None)
 
@@ -247,31 +291,28 @@ def get_session_id(event):
         or getattr(source, "room_id", None)
         or "private"
     )
-
     return f"{scope}:{user_id}"
 
 
 def handle_text_message(event, configuration):
     text = event.message.text.strip()
-    messages = []
+    session_id = get_session_id(event)
 
     if text == "postback":
-        buttons_template = ButtonsTemplate(
-            title="Postback Sample",
-            text="Postback Actions",
-            actions=[
-                PostbackAction(
-                    label="Postback Action",
-                    text="Postback Action Button Clicked!",
-                    data="postback",
-                )
-            ],
-        )
-
         messages = [
             TemplateMessage(
                 alt_text="Postback Sample",
-                template=buttons_template,
+                template=ButtonsTemplate(
+                    title="Postback Sample",
+                    text="Postback Actions",
+                    actions=[
+                        PostbackAction(
+                            label="Postback Action",
+                            text="Postback Action Button Clicked!",
+                            data="postback",
+                        )
+                    ],
+                ),
             )
         ]
 
@@ -283,11 +324,9 @@ def handle_text_message(event, configuration):
         ]
 
     elif text == "景點導覽":
-        attraction_message = get_attraction_message()
-
+        message = get_attraction_message()
         messages = [
-            attraction_message
-            if attraction_message is not None
+            message if message is not None
             else TextMessage(
                 text="🌿 景點導覽暫時無法顯示，請稍後再試。"
             )
@@ -295,7 +334,6 @@ def handle_text_message(event, configuration):
 
     elif text == "泰雅文化":
         messages = get_culture_messages()
-
         if not messages:
             messages = [
                 TextMessage(
@@ -304,22 +342,26 @@ def handle_text_message(event, configuration):
             ]
 
     else:
-        attraction_message = get_named_attraction_message(text)
+        # 明確的「看第幾站」保留原有行程順序。
+        message = get_itinerary_message(text, session_id)
 
-        if attraction_message is not None:
-            messages = [attraction_message]
-        else:
-            reply_text = get_ai_reply(
-                text,
-                session_id=get_session_id(event),
+        # 商家模組只接明確選單、翻頁及完整店名。
+        if message is None:
+            message = get_merchant_card_message(text)
+
+        if message is None:
+            message = get_named_attraction_message(text)
+
+        # 其他問題交給原本的 FAQ、天氣、緊急聯絡或 AI。
+        if message is None:
+            message = TextMessage(
+                text=get_ai_reply(text, session_id=session_id)
             )
-            messages = [TextMessage(text=reply_text)]
 
-    # 準備好訊息後只送出一次，避免失敗時重複使用 reply token。
+        messages = [message]
+
     with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
-
-        line_bot_api.reply_message(
+        MessagingApi(api_client).reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=messages,
