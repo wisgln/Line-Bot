@@ -18,13 +18,23 @@ def find_nearby_attractions(
     limit=3,
     category=None
 ):
+    """
+    category 可以是 None（全部）、一個字串，或一組類別（tuple / list）。
+    """
     attractions = load_attractions()
+
+    if isinstance(category, str):
+        categories = (category,)
+    elif category:
+        categories = tuple(category)
+    else:
+        categories = None
 
     results = []
 
     for attraction in attractions:
-        # 有指定分類時，只保留該分類
-        if category and attraction.get("category") != category:
+        # 有指定分類時，只保留符合的類別
+        if categories and attraction.get("category") not in categories:
             continue
 
         distance = calculate_distance(
