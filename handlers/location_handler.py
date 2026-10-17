@@ -9,14 +9,13 @@ from linebot.v3.messaging import (
 
 from modules.location.location_service import find_nearby_attractions
 from modules.location.location_flex import create_nearby_carousel
+from modules.location.category_menu import create_category_quick_reply
 
 
 def handle_location_message(event, configuration):
-    # 使用者傳送的目前位置
     latitude = event.message.latitude
     longitude = event.message.longitude
 
-    # 找出最近 5 個景點
     nearby = find_nearby_attractions(
         latitude,
         longitude,
@@ -36,7 +35,11 @@ def handle_location_message(event, configuration):
         messages = [
             FlexMessage(
                 alt_text="附近景點推薦",
-                contents=FlexContainer.from_dict(carousel)
+                contents=FlexContainer.from_dict(carousel),
+                quick_reply=create_category_quick_reply(
+                    latitude,
+                    longitude
+                )
             )
         ]
 
