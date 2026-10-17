@@ -1,5 +1,6 @@
 
 # 泰雅文化 Quiz 題庫
+
 QUIZ_QUESTIONS = [
     {
         "id": "quiz001",
@@ -12,8 +13,57 @@ QUIZ_QUESTIONS = [
         },
         "answer": "B",
         "explanation": "桃園市復興區是泰雅族的重要聚居地之一，具有豐富的泰雅文化與部落歷史。"
+    },
+    {
+        "id": "quiz002",
+        "question": "泰雅族傳統織布常使用哪一種材料？",
+        "options": {
+            "A": "苧麻",
+            "B": "塑膠",
+            "C": "玻璃",
+            "D": "金屬"
+        },
+        "answer": "A",
+        "explanation": "泰雅族傳統織布常使用苧麻纖維，透過紡線、染色與織造製作織品。"
+    },
+    {
+        "id": "quiz003",
+        "question": "泰雅族文化中的 Gaya 主要代表什麼？",
+        "options": {
+            "A": "現代交通工具",
+            "B": "傳統規範與倫理觀念",
+            "C": "外國語言",
+            "D": "商業品牌"
+        },
+        "answer": "B",
+        "explanation": "Gaya 是泰雅族重要的傳統規範與倫理觀念，涉及責任、尊重、合作及群體秩序。"
+    },
+    {
+        "id": "quiz004",
+        "question": "泰雅族不同部落的歷史故事通常與哪一項有關？",
+        "options": {
+            "A": "祖源與遷徙歷程",
+            "B": "太空旅行",
+            "C": "現代電腦製造",
+            "D": "國際股票市場"
+        },
+        "answer": "A",
+        "explanation": "泰雅族不同部落有各自的祖源與遷徙故事，反映族群歷史以及與土地的連結。"
+    },
+    {
+        "id": "quiz005",
+        "question": "認識角板山及復興區泰雅文化時，應該重視什麼？",
+        "options": {
+            "A": "只注意拍照打卡",
+            "B": "忽略部落生活規範",
+            "C": "尊重在地文化與部落生活",
+            "D": "任意進入私人場所"
+        },
+        "answer": "C",
+        "explanation": "參訪角板山與復興區時，應尊重在地文化、部落生活空間及文化規範。"
     }
 ]
+
 
 
 def get_quiz_question(quiz_id):
@@ -105,5 +155,118 @@ def create_quiz_flex(quiz_id):
             "layout": "vertical",
             "spacing": "sm",
             "contents": buttons
+        }
+    }
+
+def get_next_quiz_id(current_quiz_id):
+    """取得下一題 ID；最後一題回傳 None。"""
+
+    quiz_ids = [quiz["id"] for quiz in QUIZ_QUESTIONS]
+
+    if current_quiz_id not in quiz_ids:
+        return None
+
+    current_index = quiz_ids.index(current_quiz_id)
+    next_index = current_index + 1
+
+    if next_index >= len(quiz_ids):
+        return None
+
+    return quiz_ids[next_index]
+
+def create_next_quiz_button(current_quiz_id):
+    """建立下一題或完成測驗的 LINE 按鈕。"""
+
+    next_id = get_next_quiz_id(current_quiz_id)
+
+    if next_id is None:
+        return {
+            "type": "button",
+            "style": "primary",
+            "action": {
+                "type": "postback",
+                "label": "挑戰完成",
+                "data": "menu_culture",
+                "displayText": "返回泰雅文化探索"
+            }
+        }
+
+    return {
+        "type": "button",
+        "style": "primary",
+        "action": {
+            "type": "postback",
+            "label": "下一題",
+            "data": f"culture_quiz_next:{next_id}",
+            "displayText": "繼續挑戰下一題"
+        }
+    }
+
+def create_quiz_result_flex(quiz_id, user_answer):
+    """建立 Quiz 答題結果與下一題按鈕。"""
+
+    quiz = get_quiz_question(quiz_id)
+    if quiz is None:
+        return None
+
+    result = check_quiz_answer(quiz_id, user_answer)
+
+    if "correct_answer" not in result:
+        return None
+
+    is_correct = result["correct"]
+
+    title = "🎉 答對了！" if is_correct else "💡 答錯了！"
+
+    correct_answer = result["correct_answer"]
+    answer_text = quiz["options"][correct_answer]
+
+    return {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "md",
+            "contents": [
+                {
+                    "type": "text",
+                    "text": title,
+                    "weight": "bold",
+                    "size": "xl",
+                    "color": "#256D5B"
+                },
+                {
+                    "type": "text",
+                    "text": quiz["question"],
+                    "wrap": True,
+                    "size": "md"
+                },
+                {
+                    "type": "separator",
+                    "margin": "md"
+                },
+                {
+                    "type": "text",
+                    "text": f"正確答案：{correct_answer}. {answer_text}",
+                    "weight": "bold",
+                    "wrap": True,
+                    "size": "md"
+                },
+                {
+                    "type": "text",
+                    "text": result["explanation"],
+                    "wrap": True,
+                    "size": "sm",
+                    "color": "#666666"
+                }
+            ]
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                create_next_quiz_button(quiz_id)
+            ]
         }
     }
