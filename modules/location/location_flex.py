@@ -1,10 +1,11 @@
+from modules.location.opening_status import get_opening_status
 from modules.attraction.flex_message import create_attraction_bubble
 
 
 def create_nearby_carousel(attractions):
     """
     將附近景點製作成 LINE Flex Carousel。
-    使用 2 號既有的景點卡片，再加入距離資訊。
+    使用 2 號既有的景點卡片，再加入距離與營業狀態。
     """
 
     if not attractions:
@@ -17,6 +18,8 @@ def create_nearby_carousel(attractions):
         bubble = create_attraction_bubble(attraction)
 
         distance = attraction.get("distance")
+        opening_hours = attraction.get("opening_hours", "")
+        status = get_opening_status(opening_hours)
 
         # 加入 LBS 距離資訊
         if distance is not None:
@@ -32,6 +35,20 @@ def create_nearby_carousel(attractions):
                     "margin": "md"
                 }
             )
+
+        # 加入目前營業狀態
+        bubble["body"]["contents"].insert(
+            3,
+            {
+                "type": "text",
+                "text": status,
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold",
+                "wrap": True,
+                "margin": "sm"
+            }
+        )
 
         bubbles.append(bubble)
 
