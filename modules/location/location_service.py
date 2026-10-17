@@ -12,12 +12,21 @@ def load_attractions():
         return json.load(file)
 
 
-def find_nearby_attractions(latitude, longitude, limit=3):
+def find_nearby_attractions(
+    latitude,
+    longitude,
+    limit=3,
+    category=None
+):
     attractions = load_attractions()
 
     results = []
 
     for attraction in attractions:
+        # 有指定分類時，只保留該分類
+        if category and attraction.get("category") != category:
+            continue
+
         distance = calculate_distance(
             latitude,
             longitude,
@@ -30,6 +39,7 @@ def find_nearby_attractions(latitude, longitude, limit=3):
 
         results.append(result)
 
+    # 距離近的排前面
     results.sort(key=lambda place: place["distance"])
 
     return results[:limit]
