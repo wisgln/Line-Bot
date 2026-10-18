@@ -23,20 +23,26 @@ def find_nearby_attractions(
     """
     尋找附近景點。
 
-    smart_rank=True：
-        依距離 + 營業狀態 + 分類偏好進行智慧排序
+    category 可以是 None（全部）、一個字串，或一組類別（tuple / list）。
 
-    smart_rank=False：
-        單純依照距離排序
+    smart_rank=True：依距離 + 營業狀態排序
+    smart_rank=False：單純依照距離排序
     """
 
     attractions = load_attractions()
+
+    if isinstance(category, str):
+        categories = (category,)
+    elif category:
+        categories = tuple(category)
+    else:
+        categories = None
+
     results = []
 
     for attraction in attractions:
-
-        # 指定分類時只保留符合項目
-        if category and attraction.get("category") != category:
+        # 指定分類時只保留符合的類別
+        if categories and attraction.get("category") not in categories:
             continue
 
         # 沒有有效座標就跳過
@@ -59,15 +65,15 @@ def find_nearby_attractions(
         results.append(item)
 
     if smart_rank:
+        # 篩選後的結果都已經屬於選定的類別，不需要再給分類加分，
+        # 一組類別時不傳 preferred_category，避免他的排序收到不認得的格式。
+        preferred = category if isinstance(category, str) else None
         results = rank_attractions(
             results,
-            preferred_category=category
+            preferred_category=preferred
         )
-
     else:
-        results.sort(
-            key=lambda place: place["distance"]
-        )
+        results.sort(key=lambda place: place["distance"])
 
     # 排完之後才取前 N 名
     return results[:limit]
