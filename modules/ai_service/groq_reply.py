@@ -105,25 +105,32 @@ def _remember(
 
 def _description(item):
     value = item.get("description", "")
-
     if not isinstance(value, str):
         return ""
 
-    # 使用資料中的特色，不使用 AI 生成的設施與路程說法。
-    sentences = re.split(
-        r"(?<=[。！？；])|\n",
-        value,
-    )
+    selected = []
 
-    for sentence in sentences:
-        if sentence and not re.search(
-            r"停車|步行|車程|無障礙|輪椅|營業|開放|"
-            r"分鐘|適合長輩|好走",
+    for sentence in re.split(r"(?<=[。！？；])|\n", value):
+        sentence = sentence.strip()
+
+        if not sentence or sentence.endswith(("？", "?", "吧！", "吧!")):
+            continue
+
+        if re.search(
+            r"停車|步行|車程|無障礙|輪椅|營業|開放|分鐘|適合長輩|好走",
             sentence,
         ):
-            return sentence[:100]
+            continue
 
-    return ""
+        if len("".join(selected)) + len(sentence) > 150:
+            continue
+
+        selected.append(sentence)
+
+        if len(selected) == 2:
+            break
+
+    return "".join(selected)
 
 
 def _prepare_stops(raw_stops, text, previous):
@@ -356,11 +363,36 @@ def _validate(core, raw_stops, context, text):
 
 
 def _render(stops):
-    lines = ["🗓 行程草案", ""]
+    lines = ["🗓️ 你的旅行草案", ""]
+    current_day = None
 
-    for i, stop in enumerate(stops, 1):
+    for number, stop in enumerate(stops, 1):
+        label = stop["time"]
+        match = re.fullmatch(
+            r"第([1-7一二三四五六七])天[｜ ]?(.+)",
+            label,
+        )
+
+        if match:
+            day, label = match.groups()
+
+            if day != current_day:
+                lines.extend([f"🌼 第{day}天", ""])
+                current_day = day
+
+        icon = {
+            "清晨": "🌤️",
+            "早上": "🌤️",
+            "上午": "🌞",
+            "中午": "🍽️",
+            "下午": "🌿",
+            "傍晚": "🌇",
+            "晚上": "🌙",
+            "夜間": "🌙",
+        }.get(label, "📍")
+
         lines.append(
-            f"第{i}站｜{stop['time']}｜{stop['name']}"
+            f"{icon} 第{number}站｜{label}｜{stop['name']}"
         )
 
         if stop.get("note"):
@@ -369,8 +401,8 @@ def _render(stops):
         lines.append("")
 
     lines.append(
-        "💡 出發提醒：交通接續、停車及實際步行量尚未驗證；"
-        "有步行上限時，這份草案不代表已符合限制。"
+        "🌷 出發前可先向店家或景點確認營業與開放資訊，"
+        "當天再依天氣和同行者體力彈性調整，玩得更安心！"
     )
 
     return "\n".join(lines)
@@ -759,3 +791,16 @@ def get_groq_reply(text, *, session_id=None):
                 "這次回答未通過檢查或服務暫時無法回應，"
                 "原行程仍保留。請稍後重試。"
             )
+
+# REPLY_STYLE_V1
+PROMPT += """
+【介紹與排版補充】
+一般問答只回答當次問題，不重貼行程，不主動加上其他店家。
+餐廳介紹優先整理料理特色、已有的價格與單位；民宿整理住宿特色與已知設施；景點整理主要看點與體驗。
+每次挑二至三個有資料支持的重點，避免空泛口號，不虛構餐點、設施、景觀或適用族群。
+使用自然繁體中文與一至兩個貼切表情符號，可短段落或列點，避免整段擠在一起。
+資料不足只針對使用者問的部分說明，不用每句重複未確認。
+遇到步行上限或無障礙需求而資料不足時，使用answer說明具體不足並詢問，不可僅以一般出發提醒取代限制說明。
+缺少交通方式、目的地或天數時先追問，不要同時產生完整行程。
+不要在message加入「看第2站」等操作教學。
+"""

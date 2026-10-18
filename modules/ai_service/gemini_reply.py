@@ -349,7 +349,7 @@ def decode_plan(answer, context):
             lines.append("")
 
         lines.append(
-            "📍 輸入「看第2站」查看該站，或說「第二站換掉」。"
+            "🌷 出發前可先向店家或景點確認營業與開放資訊，當天再依天氣和同行者體力彈性調整，玩得更安心！"
         )
 
     return "\n".join(lines).strip(), validated
