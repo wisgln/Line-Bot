@@ -32,6 +32,10 @@ def calculate_recommendation_score(attraction, preferred_category=None):
     if opening_status.startswith("🟢"):
         score += 40
 
+    elif opening_status.startswith("🟡"):
+        # 部分開放（例如戶外開放、室內休館），仍可前往，視同營業中
+        score += 40
+
     elif opening_status.startswith("⚪"):
         # 資料不確定，不直接判定不好
         score += 5
