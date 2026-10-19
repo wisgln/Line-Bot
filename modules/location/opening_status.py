@@ -1,6 +1,9 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 import re
 
+
+# Vercel 的伺服器使用 UTC，營業狀態一律以台灣時間（UTC+8）判斷。
+TAIWAN_TZ = timezone(timedelta(hours=8))
 
 WEEKDAY_NAMES = {
     0: "一",
@@ -11,6 +14,23 @@ WEEKDAY_NAMES = {
     5: "六",
     6: "日",
 }
+
+TIME_RANGE = r"(\d{1,2}:\d{2})-(\d{1,2}:\d{2})"
+
+
+def _to_minutes(time_text):
+    hour, minute = map(int, time_text.split(":"))
+    return hour * 60 + minute
+
+
+def _in_range(period, current_minutes):
+    try:
+        start = _to_minutes(period[0])
+        end = _to_minutes(period[1])
+    except ValueError:
+        return False
+
+    return start <= current_minutes < end
 
 
 def get_opening_status(opening_hours, now=None):
@@ -25,14 +45,14 @@ def get_opening_status(opening_hours, now=None):
     - 24小時
     - 全天可通行
     - 平日 / 假日不同營業時間
+    - 室內 / 戶外不同營業時間
     - 未公布固定開放時間
     """
 
     if not opening_hours:
         return "⚪ 營業時間未提供"
 
-    TAIWAN_TIMEZONE = timezone(timedelta(hours=8))
-    now = now or datetime.now(TAIWAN_TIMEZONE)
+    now = now or datetime.now(TAIWAN_TZ)
     text = str(opening_hours).strip()
 
     # 沒有固定營業時間
@@ -68,12 +88,30 @@ def get_opening_status(opening_hours, now=None):
         .replace("~", "-")
     )
 
+    current_minutes = now.hour * 60 + now.minute
+
+    # 室內、戶外時段不同（例如角板山行館）
+    indoor_match = re.search(r"室內\s*" + TIME_RANGE, normalized)
+    outdoor_match = re.search(r"戶外\s*" + TIME_RANGE, normalized)
+
+    if indoor_match and outdoor_match:
+        indoor_open = _in_range(indoor_match.groups(), current_minutes)
+        outdoor_open = _in_range(outdoor_match.groups(), current_minutes)
+
+        if indoor_open and outdoor_open:
+            return "🟢 營業中"
+        if outdoor_open:
+            return "🟡 戶外開放中，室內已休館"
+        if indoor_open:
+            return "🟡 室內開放中，戶外已休館"
+        return "🔴 目前休息"
+
     periods = []
 
     # 平日 / 假日不同時間
     if now.weekday() < 5:
         weekday_match = re.search(
-            r"平日\s*(\d{1,2}:\d{2})-(\d{1,2}:\d{2})",
+            r"平日\s*" + TIME_RANGE,
             normalized
         )
 
@@ -82,7 +120,7 @@ def get_opening_status(opening_hours, now=None):
 
     else:
         holiday_match = re.search(
-            r"假日\s*(\d{1,2}:\d{2})-(\d{1,2}:\d{2})",
+            r"假日\s*" + TIME_RANGE,
             normalized
         )
 
@@ -91,37 +129,15 @@ def get_opening_status(opening_hours, now=None):
 
     # 如果沒有平日 / 假日格式，就抓全部時間區段
     if not periods:
-        periods = re.findall(
-            r"(\d{1,2}:\d{2})-(\d{1,2}:\d{2})",
-            normalized
-        )
+        periods = re.findall(TIME_RANGE, normalized)
 
     # 找不到時間格式
     if not periods:
         return "⚪ 營業狀態待確認"
 
-    current_minutes = now.hour * 60 + now.minute
-
     # 檢查是否落在任一營業區段
-    for start_text, end_text in periods:
-        try:
-            start_hour, start_minute = map(
-                int,
-                start_text.split(":")
-            )
-
-            end_hour, end_minute = map(
-                int,
-                end_text.split(":")
-            )
-
-            start = start_hour * 60 + start_minute
-            end = end_hour * 60 + end_minute
-
-            if start <= current_minutes < end:
-                return "🟢 營業中"
-
-        except ValueError:
-            continue
+    for period in periods:
+        if _in_range(period, current_minutes):
+            return "🟢 營業中"
 
     return "🔴 目前休息"
