@@ -193,6 +193,7 @@ def make_food_menu(merchants):
 
 def create_merchant_bubble(merchant):
     lodging = merchant["category"] == "民宿"
+    from_google = merchant.get("source_provider") == "google_maps"
     heading = "🏡 山裡住一晚" if lodging else "🍽️ 山裡吃一餐"
     description = merchant.get("description") or "點選詳細介紹，看看店家資訊。"
 
@@ -247,11 +248,16 @@ def create_merchant_bubble(merchant):
                 )
             )
     else:
+        if lodging:
+            price_text = "💰 房價請依日期與人數向業者確認"
+        elif from_google:
+            price_text = "💰 價格請洽店家"
+        else:
+            price_text = "💰 消費參考請點「詳細介紹」查看"
+
         contents.append(
             text_item(
-                "💰 房價請依日期與人數向業者確認"
-                if lodging
-                else "💰 消費參考請點「詳細介紹」查看",
+                price_text,
                 size="xs",
                 color="#6B7280",
             )
@@ -267,13 +273,17 @@ def create_merchant_bubble(merchant):
         )
     )
 
-    buttons = [
-        message_button(
-            "📖 詳細介紹",
-            f"商家詳細：{merchant['name']}",
-            primary=True,
+    buttons = []
+
+    # Google 來的店不在我們的商家資料裡，詳細介紹會找不到，所以不放。
+    if not from_google:
+        buttons.append(
+            message_button(
+                "📖 詳細介紹",
+                f"商家詳細：{merchant['name']}",
+                primary=True,
+            )
         )
-    ]
 
     map_button = uri_button("📍 查看地圖", merchant.get("maps_url"))
     if map_button:
