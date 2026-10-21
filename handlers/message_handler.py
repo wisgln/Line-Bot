@@ -186,7 +186,7 @@ def get_merchant_card_message(text):
         return get_merchant_message(text)
 
     except Exception:
-        logger.error("Merchant cards failed")
+        logger.exception("Merchant cards failed")
         # 字卡失敗時，交回原本的文字查詢。
         return None
 
@@ -252,10 +252,23 @@ def get_itinerary_message(text, session_id):
         stop = stops[number - 1]
 
         if stop["kind"] != "attraction":
+            from modules.merchant.merchant_cards import (
+                load_merchants, create_merchant_bubble, flex_message,
+            )
+            matches = [
+                item for item in load_merchants()
+                if item.get("name") == stop.get("name")
+                and (not stop.get("id") or str(item.get("id")) == str(stop["id"]))
+            ]
+            if len(matches) == 1:
+                return flex_message(
+                    f"第{number}站｜{matches[0]['name']}",
+                    create_merchant_bubble(matches[0], detailed=True),
+                )
             lines = [f"📍 第{number}站｜{stop['name']}"]
             if stop.get("note"):
                 lines.append(stop["note"])
-            lines.append("這站是用餐、住宿或其他安排，沒有景點字卡。")
+            lines.append("🌷 這站沒有對應的店家資料，可依當天安排彈性調整。")
             return TextMessage(text="\n".join(lines))
 
         matches = [
@@ -273,7 +286,7 @@ def get_itinerary_message(text, session_id):
         return make_attraction_message(matches[0])
 
     except Exception:
-        logger.error("Itinerary card failed")
+        logger.exception("Itinerary card failed")
         return TextMessage(
             text="🌿 這站的資料暫時無法顯示，請稍後再試。"
         )

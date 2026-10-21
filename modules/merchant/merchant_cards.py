@@ -191,13 +191,13 @@ def make_food_menu(merchants):
     )
 
 
-def create_merchant_bubble(merchant):
+def create_merchant_bubble(merchant, detailed=False):
     lodging = merchant["category"] == "民宿"
     heading = "🏡 山裡住一晚" if lodging else "🍽️ 山裡吃一餐"
     description = merchant.get("description") or "點選詳細介紹，看看店家資訊。"
 
     # 字卡先顯示短介紹；完整內容保留在詳細介紹。
-    if len(description) > 100:
+    if not detailed and len(description) > 100:
         description = description[:99] + "…"
 
     contents = [
@@ -215,6 +215,10 @@ def create_merchant_bubble(merchant):
         text_item(description),
         text_item("📍 " + merchant["address"], size="xs"),
     ])
+
+    hours = merchant.get("opening_hours")
+    if isinstance(hours, str) and hours.strip():
+        contents.append(text_item("🕒 " + hours.strip(), size="sm"))
 
     prices = merchant.get("price_items", [])
     if prices:
@@ -430,10 +434,12 @@ def get_merchant_message(text):
     raw = unicodedata.normalize("NFKC", text).strip()
     query = normalize(raw)
 
-    food_menu = query in {
+    menu_query = re.sub(r"^(?:請幫我|可以幫我|幫我|請|我想要|我想)", "", query)
+    menu_query = re.sub(r"(?:嗎|呢)$", "", menu_query)
+    food_menu = menu_query in {
         "餐廳", "推薦餐廳", "找餐廳", "美食", "推薦美食", "餐廳分類",
     }
-    lodging_list = query in {"民宿", "住宿", "推薦民宿"}
+    lodging_list = menu_query in {"民宿", "住宿", "推薦民宿", "推薦住宿", "找民宿", "找住宿"}
     all_restaurants = query == "全部餐廳"
 
     food_page = re.fullmatch(
@@ -485,14 +491,7 @@ def get_merchant_message(text):
     if len(matches) != 1:
         return TextMessage(text="🌿 店名有重複資料，請通知管理者確認。")
 
-    if detail:
-        answer = format_merchant(matches[0])
-        # 以 UTF-16 計算，避免超過 LINE 文字訊息限制。
-        if len(answer.encode("utf-16-le")) // 2 > 4400:
-            return TextMessage(text="🌿 店家介紹較長，請先使用字卡上的資料來源查看。")
-        return TextMessage(text=answer)
-
     return flex_message(
         f"店家介紹｜{matches[0]['name']}",
-        create_merchant_bubble(matches[0]),
+        create_merchant_bubble(matches[0], detailed=bool(detail)),
     )
