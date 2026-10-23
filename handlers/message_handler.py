@@ -386,6 +386,17 @@ def get_smart_itinerary_message():
         quick_reply=QuickReply(items=items),
     )
 
+def get_food_stay_message():
+    """美食住宿：選擇餐廳或民宿。"""
+    items = [
+        QuickReplyItem(action=MessageAction(label="🍜 餐廳", text="餐廳")),
+        QuickReplyItem(action=MessageAction(label="🏡 民宿", text="民宿")),
+    ]
+
+    return TextMessage(
+        text="🍽 美食住宿\n想看餐廳還是民宿？",
+        quick_reply=QuickReply(items=items),
+    )
 
 def get_session_id(event):
     """區分私人、群組、聊天室及使用者。"""
@@ -461,6 +472,9 @@ def handle_text_message(event, configuration):
 
     elif text == "智慧行程":
         messages = [get_smart_itinerary_message()]
+
+    elif text == "美食住宿":
+        messages = [get_food_stay_message()]
 
     elif text == "AI 問答":
         messages = [
