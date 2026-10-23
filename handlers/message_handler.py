@@ -14,6 +14,9 @@ from linebot.v3.messaging import (
     TextMessage,
     FlexMessage,
     FlexContainer,
+    QuickReply,
+    QuickReplyItem,
+    MessageAction,
 )
 
 
@@ -350,6 +353,40 @@ def get_itinerary_message(text, session_id):
         )
 
 
+def get_travel_assistant_message():
+    """旅遊助手：天氣、交通、緊急聯絡、AI 問答的入口。"""
+    items = [
+        QuickReplyItem(action=MessageAction(label="🌤 天氣", text="天氣")),
+        QuickReplyItem(action=MessageAction(label="🚌 交通", text="交通")),
+        QuickReplyItem(
+            action=MessageAction(label="🚨 緊急聯絡", text="緊急聯絡")
+        ),
+        QuickReplyItem(action=MessageAction(label="🤖 AI 問答", text="AI 問答")),
+    ]
+
+    return TextMessage(
+        text="🧳 旅遊助手\n想查什麼？點下方按鈕，或直接打字問我。",
+        quick_reply=QuickReply(items=items),
+    )
+
+
+def get_smart_itinerary_message():
+    """智慧行程：選擇半日或一日。"""
+    items = [
+        QuickReplyItem(
+            action=MessageAction(label="☀️ 半日行程", text="幫我排半日行程")
+        ),
+        QuickReplyItem(
+            action=MessageAction(label="🌄 一日行程", text="幫我排一日行程")
+        ),
+    ]
+
+    return TextMessage(
+        text="🗺 智慧行程\n想排多久的行程？也可以直接打字告訴我人數、交通方式或想去的地方。",
+        quick_reply=QuickReply(items=items),
+    )
+
+
 def get_session_id(event):
     """區分私人、群組、聊天室及使用者。"""
     source = event.source
@@ -418,6 +455,19 @@ def handle_text_message(event, configuration):
                     text="🌿 文化介紹暫時無法顯示，請稍後再試。"
                 )
             ]
+
+    elif text == "旅遊助手":
+        messages = [get_travel_assistant_message()]
+
+    elif text == "智慧行程":
+        messages = [get_smart_itinerary_message()]
+
+    elif text == "AI 問答":
+        messages = [
+            TextMessage(
+                text="🤖 想問什麼都可以直接打字問我喔！\n例如：「小烏來怎麼去」「適合親子的景點」。"
+            )
+        ]
 
     else:
         session_id = get_session_id(event)
