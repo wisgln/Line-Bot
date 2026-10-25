@@ -485,7 +485,10 @@ def handle_text_message(event, configuration):
 
     else:
         session_id = get_session_id(event)
-        message = get_itinerary_message(text, session_id)
+        from modules.ai_service.info_cards import get_info_card
+        message = get_info_card(text, session_id)
+        if message is None:
+            message = get_itinerary_message(text, session_id)
         if message is None:
             message = get_merchant_card_message(text)
         if message is None:
