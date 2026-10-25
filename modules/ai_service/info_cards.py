@@ -154,6 +154,10 @@ def get_info_card(text, session_id=None):
     query = normalize(text)
     if is_planning(text) or (has_session(session_id) and any(word in query for word in PLAN_EDIT_WORDS)):
         return None
+    from .traffic_cards import get_traffic_card
+    traffic_card = get_traffic_card(text)
+    if traffic_card is not None:
+        return traffic_card
     intent = detect_intent(text)
     if intent == "weather":
         return get_weather_card()
