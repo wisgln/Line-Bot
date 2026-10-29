@@ -354,12 +354,16 @@ def get_itinerary_message(text, session_id):
 
 
 def get_travel_assistant_message():
-    """旅遊助手：天氣、交通、緊急聯絡、AI 問答的入口。"""
+    """旅遊助手：天氣、交通、緊急聯絡、農特產、商家合作、AI 問答的入口。"""
     items = [
         QuickReplyItem(action=MessageAction(label="🌤 天氣", text="天氣")),
         QuickReplyItem(action=MessageAction(label="🚌 交通", text="交通")),
         QuickReplyItem(
             action=MessageAction(label="🚨 緊急聯絡", text="緊急聯絡")
+        ),
+        QuickReplyItem(action=MessageAction(label="🌾 農特產", text="農特產")),
+        QuickReplyItem(
+            action=MessageAction(label="🤝 商家合作", text="商家合作")
         ),
         QuickReplyItem(action=MessageAction(label="🤖 AI 問答", text="AI 問答")),
     ]
@@ -386,6 +390,7 @@ def get_smart_itinerary_message():
         quick_reply=QuickReply(items=items),
     )
 
+
 def get_food_stay_message():
     """美食住宿：選擇餐廳或民宿。"""
     items = [
@@ -397,6 +402,21 @@ def get_food_stay_message():
         text="🍽 美食住宿\n想看餐廳還是民宿？",
         quick_reply=QuickReply(items=items),
     )
+
+
+def get_partner_message():
+    """商家合作：餐廳、民宿、農特產；優惠券做好後再加入。"""
+    items = [
+        QuickReplyItem(action=MessageAction(label="🍜 餐廳", text="餐廳")),
+        QuickReplyItem(action=MessageAction(label="🏡 民宿", text="民宿")),
+        QuickReplyItem(action=MessageAction(label="🌾 農特產", text="農特產")),
+    ]
+
+    return TextMessage(
+        text="🤝 商家合作\n想看哪一類合作商家？",
+        quick_reply=QuickReply(items=items),
+    )
+
 
 def get_session_id(event):
     """區分私人、群組、聊天室及使用者。"""
@@ -475,6 +495,9 @@ def handle_text_message(event, configuration):
 
     elif text == "美食住宿":
         messages = [get_food_stay_message()]
+
+    elif text == "商家合作":
+        messages = [get_partner_message()]
 
     elif text == "AI 問答":
         messages = [
