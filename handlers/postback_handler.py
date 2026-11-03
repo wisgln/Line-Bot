@@ -1,4 +1,4 @@
-import logging
+﻿import logging
 
 from linebot.v3.messaging import (
     ApiClient,
@@ -72,13 +72,39 @@ def get_nearby_restaurant_message(data):
         return None
 
 
+def get_coupon_message(data):
+    """專題示範優惠券流程。"""
+    try:
+        from modules.coupon.coupon_postback import handle_coupon_postback
+
+        return handle_coupon_postback(data)
+    except Exception:
+        logger.exception("Coupon postback failed")
+        return None
+
+
 def handle_postback_event(event, configuration):
     data = event.postback.data
+    # =========================
+    # 優惠券專區
+    # =========================
+    if (
+        data == "coupon_list"
+        or data.startswith("coupon_claim&")
+        or data.startswith("coupon_use&")
+        or data.startswith("coupon_confirm&")
+    ):
+        message = get_coupon_message(data)
+
+        if message is None:
+            message = TextMessage(
+                text="優惠券功能暫時無法使用，請稍後再試。"
+            )
 
     # =========================
     # 3 號：附近餐廳
     # =========================
-    if data.startswith("nearby_restaurants&"):
+    elif data.startswith("nearby_restaurants&"):
         message = get_nearby_restaurant_message(data)
 
         if message is None:
