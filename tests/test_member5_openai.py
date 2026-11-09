@@ -1,10 +1,18 @@
 import json
+import sys
 import unittest
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from modules.ai_service.openai_reply import get_openai_reply
+from modules.ai_service.openai_reply import (
+    ITINERARY_FORMAT,
+    create_json_response,
+    create_text_response,
+)
 from modules.ai_service import get_reply
 from modules.ai_service.ai_service import FALLBACK
+from modules.ai_service import gemini_reply as planning_core
 
 
 class OpenAITests(unittest.TestCase):
@@ -65,6 +73,77 @@ class OpenAITests(unittest.TestCase):
         with patch('modules.ai_service.openai_reply.build_context', side_effect=ValueError), patch('modules.ai_service.openai_reply.urlopen') as call:
             self.assertIsNone(get_openai_reply('旅遊建議'))
             call.assert_not_called()
+
+    def test_openai_is_primary_planning_provider(self):
+        with patch(
+            'modules.ai_service.groq_reply.get_groq_reply',
+            return_value='OpenAI itinerary',
+        ) as call:
+            self.assertTrue(planning_core.enabled())
+            self.assertEqual(
+                planning_core.get_gemini_reply('幫我排一日遊'),
+                'OpenAI itinerary',
+            )
+            call.assert_called_once_with('幫我排一日遊', session_id=None)
+
+    def test_structured_responses_request(self):
+        response = SimpleNamespace(
+            status='completed',
+            output_text='{"action":"answer","message":"您好","stops":[]}',
+        )
+        client = MagicMock()
+        client.__enter__.return_value.responses.create.return_value = response
+        factory = MagicMock(return_value=client)
+        module = SimpleNamespace(OpenAI=factory)
+        messages = [
+            {'role': 'system', 'content': '只輸出 JSON'},
+            {'role': 'user', 'content': '安排一日遊'},
+        ]
+
+        with patch.dict(sys.modules, {'openai': module}):
+            status, content = create_json_response(messages)
+
+        self.assertEqual(status, 'completed')
+        self.assertIn('"action":"answer"', content)
+        request = client.__enter__.return_value.responses.create
+        request.assert_called_once_with(
+            model='gpt-4.1-mini',
+            instructions='只輸出 JSON',
+            input=messages[1:],
+            text={'format': ITINERARY_FORMAT},
+            max_output_tokens=2000,
+            store=False,
+        )
+        factory.assert_called_once_with(
+            api_key='test-key', timeout=30.0, max_retries=0
+        )
+
+    def test_text_responses_request_uses_small_output_budget(self):
+        response = SimpleNamespace(
+            status='completed',
+            output_text='下雨可以優先安排室內文化景點。',
+        )
+        client = MagicMock()
+        client.__enter__.return_value.responses.create.return_value = response
+        factory = MagicMock(return_value=client)
+        module = SimpleNamespace(OpenAI=factory)
+        messages = [
+            {'role': 'system', 'content': '精簡回答旅遊問題'},
+            {'role': 'user', 'content': '下雨適合去哪裡？'},
+        ]
+
+        with patch.dict(sys.modules, {'openai': module}):
+            status, content = create_text_response(messages)
+
+        self.assertEqual(status, 'completed')
+        self.assertIn('下雨', content)
+        client.__enter__.return_value.responses.create.assert_called_once_with(
+            model='gpt-4.1-mini',
+            instructions='精簡回答旅遊問題',
+            input=messages[1:],
+            max_output_tokens=500,
+            store=False,
+        )
 
 
 if __name__ == '__main__':

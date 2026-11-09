@@ -122,9 +122,13 @@ CHANNEL_SECRET=
 WEATHER_API_KEY=
 GOOGLE_MAPS_API_KEY=
 AI_API_KEY=
+OPENAI_ENABLED=true
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4.1-mini
 ```
 
 `.env` 已加入 `.gitignore`，不會被上傳，請勿把金鑰直接寫死在程式碼裡。
+OpenAI 為主要行程規劃提供者；啟用時請將其他 AI 提供者設為停用，避免路由不明。
 
 ---
 
