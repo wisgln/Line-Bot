@@ -1,4 +1,4 @@
-﻿import json
+import json
 from datetime import date
 from types import SimpleNamespace as S
 from unittest.mock import patch
@@ -39,7 +39,7 @@ def test_coupon_lookup_and_expiration():
     coupon = get_coupon("coupon_001")
 
     assert coupon is not None
-    assert coupon["title"] == "復興農產滿額示範券"
+    assert coupon["title"] == "復興農產好禮"
     assert is_expired(
         coupon,
         today=date(2026, 11, 3),
@@ -58,9 +58,9 @@ def test_coupon_list_is_flex_and_has_demo_notice():
 
     payload = readable_json(message)
 
-    assert "專題示範優惠券" in payload
-    assert "非實際商業優惠" in payload
-    assert "coupon_claim" in payload
+    assert "優惠券專區" in payload
+    assert "非實際商家活動" in payload
+    assert "coupon_detail" in payload
 
 
 def test_coupon_claim_and_use_flow():
@@ -72,7 +72,7 @@ def test_coupon_claim_and_use_flow():
 
     claimed_payload = readable_json(claimed)
 
-    assert "已領取（本次展示）" in claimed_payload
+    assert "已加入優惠券" in claimed_payload
     assert "coupon_use" in claimed_payload
 
     confirm = handle_coupon_postback(
@@ -83,7 +83,7 @@ def test_coupon_claim_and_use_flow():
 
     confirm_payload = readable_json(confirm)
 
-    assert "確認模擬使用" in confirm_payload
+    assert "確認試算" in confirm_payload
     assert "coupon_confirm" in confirm_payload
 
     done = handle_coupon_postback(
@@ -91,8 +91,8 @@ def test_coupon_claim_and_use_flow():
     )
 
     assert isinstance(done, TextMessage)
-    assert "模擬核銷完成" in done.text
-    assert "沒有向任何實體商家" in done.text
+    assert "折扣試算完成" in done.text
+    assert "未向任何實體商家" in done.text
 
 
 def test_invalid_coupon_returns_friendly_message():
