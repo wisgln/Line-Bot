@@ -1,4 +1,4 @@
-﻿"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
+"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
 
 import logging
 import re
@@ -354,7 +354,7 @@ def get_itinerary_message(text, session_id):
 
 
 def get_travel_assistant_message():
-    """旅遊助手：天氣、交通、緊急聯絡、農特產、商家合作、AI 問答的入口。"""
+    """旅遊助手：天氣、交通、緊急聯絡、農特產、優惠券、商家合作、AI 問答的入口。"""
     items = [
         QuickReplyItem(action=MessageAction(label="🌤 天氣", text="天氣")),
         QuickReplyItem(action=MessageAction(label="🚌 交通", text="交通")),
@@ -362,6 +362,7 @@ def get_travel_assistant_message():
             action=MessageAction(label="🚨 緊急聯絡", text="緊急聯絡")
         ),
         QuickReplyItem(action=MessageAction(label="🌾 農特產", text="農特產")),
+        QuickReplyItem(action=MessageAction(label="🎟 優惠券", text="優惠券")),
         QuickReplyItem(
             action=MessageAction(label="🤝 商家合作", text="商家合作")
         ),

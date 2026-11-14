@@ -1,4 +1,4 @@
-﻿import logging
+import logging
 
 from linebot.v3.messaging import (
     ApiClient,
@@ -90,6 +90,7 @@ def handle_postback_event(event, configuration):
     # =========================
     if (
         data == "coupon_list"
+        or data.startswith("coupon_detail&")
         or data.startswith("coupon_claim&")
         or data.startswith("coupon_use&")
         or data.startswith("coupon_confirm&")
