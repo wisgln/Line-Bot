@@ -1,7 +1,7 @@
 """示範優惠資料與優惠計算：不建立真實訂單或付款。"""
 
 import json
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -84,15 +84,17 @@ def is_expired(coupon, today=None):
     if not isinstance(coupon, dict):
         return True
     try:
-        return (today or date.today()) > date.fromisoformat(coupon["valid_until"])
+        return (today or datetime.now(timezone(timedelta(hours=8))).date()) > date.fromisoformat(coupon["valid_until"])
     except (KeyError, TypeError, ValueError):
         return True
 
 
-def calculate_discount(coupon):
-    """對 coupons.json 定義的單件示例商品計算折後價，皆為新臺幣整數。"""
+def calculate_discount(coupon, quantity=1):
+    """示例商品價與折扣試算（新台幣元），滿額券只折抵一次。"""
     _validate_coupon(coupon)
-    original = coupon["original_price"]
+    if type(quantity) is not int or not 1 <= quantity <= 10:
+        raise ValueError("商品數量必須是 1 到 10 的整數")
+    original = coupon["original_price"] * quantity
     if original < coupon["min_spend"]:
         discount = 0
     elif coupon["discount_type"] == "fixed":
@@ -100,6 +102,7 @@ def calculate_discount(coupon):
     else:
         discount = original * coupon["discount_value"] // 100
     return {
+        "quantity": quantity,
         "original": original,
         "discount": discount,
         "total": original - discount,

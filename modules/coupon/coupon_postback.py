@@ -6,6 +6,7 @@ from urllib.parse import parse_qs
 from linebot.v3.messaging import FlexContainer, FlexMessage, TextMessage
 
 from modules.coupon.coupon_flex import create_coupon_bubble, create_coupon_carousel
+from modules.coupon.coupon_links import get_coupon_shop_url
 from modules.coupon.coupon_service import (
     calculate_discount, get_coupon, is_expired, load_coupons,
 )
@@ -75,7 +76,10 @@ def handle_coupon_postback(data):
                 return error
             return _flex(
                 f"{title}｜{coupon['title']}",
-                create_coupon_bubble(coupon, mode=mode),
+                create_coupon_bubble(
+                    coupon, mode=mode,
+                    shop_url=get_coupon_shop_url(coupon["id"]),
+                ),
             )
 
     if data.startswith("coupon_confirm&"):

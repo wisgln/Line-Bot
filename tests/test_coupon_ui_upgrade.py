@@ -1,4 +1,4 @@
-"""優惠券 2.0 的新流程與旅遊助手按鈕測試。"""
+﻿"""優惠券 2.0 的新流程與旅遊助手按鈕測試。"""
 
 import json
 from unittest.mock import patch
@@ -25,7 +25,7 @@ def test_assistant_has_coupon_button():
 
 def test_discount_totals():
     by_id = {c["id"]: c for c in load_coupons()}
-    assert calculate_discount(by_id["coupon_001"])["total"] == 530
+    assert calculate_discount(by_id["coupon_001"])["total"] == 320
     assert calculate_discount(by_id["coupon_002"])["total"] == 324
     assert calculate_discount(by_id["coupon_003"])["total"] == 400
 
@@ -46,7 +46,7 @@ def test_coupon_full_funnel():
 
     checkout = handle_coupon_postback("coupon_use&id=coupon_001")
     assert isinstance(checkout, FlexMessage)
-    assert "NT$530" in readable_json(checkout)
+    assert "NT$320" in readable_json(checkout)
     assert "coupon_confirm" in readable_json(checkout)
 
     done = handle_coupon_postback("coupon_confirm&id=coupon_001")

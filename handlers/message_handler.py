@@ -517,7 +517,10 @@ def handle_text_message(event, configuration):
     elif text == "商家合作":
         messages = [get_partner_message()]
 
-    elif text in {"優惠券", "優惠券專區"}:
+    elif (
+        ("優惠券" in text or "折價券" in text)
+        and not any(word in text for word in ("安排行程", "幫我排", "行程", "第二站"))
+    ):
         messages = [get_coupon_message()]
 
     elif text == "AI 問答":

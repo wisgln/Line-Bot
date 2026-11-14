@@ -34,6 +34,16 @@ def _button(label, action, cid=None, primary=False):
     return item
 
 
+def _uri_button(label, url, primary=False):
+    button = {
+        "type": "button", "style": "primary" if primary else "link",
+        "height": "sm", "action": {"type": "uri", "label": label, "uri": url},
+    }
+    if primary:
+        button["color"] = GREEN
+    return button
+
+
 def _bubble(header, body, footer):
     return {
         "type": "bubble", "size": "mega",
@@ -56,7 +66,7 @@ def _note():
     return _text(NOTICE, "xs", MUTED)
 
 
-def create_coupon_bubble(coupon, mode="browse"):
+def create_coupon_bubble(coupon, mode="browse", shop_url=None):
     """browse/list、detail、claimed、checkout 共用同一份商品及價格資料。"""
     expired = is_expired(coupon)
     cid = coupon["id"]
@@ -112,6 +122,17 @@ def create_coupon_bubble(coupon, mode="browse"):
         action = _button("返回列表", "coupon_list")
 
     footer = [action]
+    if not expired and shop_url and mode == "claimed":
+        # 主要按鈕直達手機商品頁；保留 LINE 內試算相容舊卡片與測試。
+        footer = [
+            _uri_button("立即使用", shop_url, True),
+            _button("LINE 內快速試算", "coupon_use", cid),
+        ]
+    elif not expired and shop_url and mode == "checkout":
+        footer = [
+            _uri_button("開啟折扣商品頁", shop_url, True),
+            _button("確認試算", "coupon_confirm", cid),
+        ]
     if mode != "browse":
         footer.append(_button("返回優惠券列表", "coupon_list"))
     return _bubble(tag, body, footer)
