@@ -18,6 +18,10 @@ from handlers.location_handler import handle_location_message
 
 app = Flask(__name__)
 
+# 學生專題折扣商品展示頁（不處理真實交易）。
+from modules.coupon.coupon_web import coupon_web
+app.register_blueprint(coupon_web)
+
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 line_handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
@@ -26,7 +30,7 @@ line_handler = WebhookHandler(LINE_CHANNEL_SECRET)
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    app.logger.info("LINE webhook received")
 
     try:
         line_handler.handle(body, signature)
