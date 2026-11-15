@@ -72,7 +72,7 @@ class NaturalLanguageTests(unittest.TestCase):
             "modules.merchant.merchant_service.get_merchant_reply"
         ) as mock_reply:
             reply = get_reply("泰雅小棧特色料理有優惠券嗎")
-            self.assertIn("尚未提供優惠券", reply)
+            self.assertIn("優惠券專區", reply)
             mock_reply.assert_not_called()
 
     def test_emergency_still_has_priority(self):

@@ -18,15 +18,18 @@ from handlers.location_handler import handle_location_message
 
 app = Flask(__name__)
 
-configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
-line_handler = WebhookHandler(LINE_CHANNEL_SECRET)
+try:
+    from modules.coupon.coupon_web import coupon_web
+    app.register_blueprint(coupon_web)
+except Exception:
+    app.logger.exception("Coupon web page failed to load")
 
 
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    app.logger.info("LINE webhook received")
 
     try:
         line_handler.handle(body, signature)
