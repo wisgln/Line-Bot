@@ -24,6 +24,9 @@ try:
 except Exception:
     app.logger.exception("Coupon web page failed to load")
 
+configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+line_handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
