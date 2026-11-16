@@ -29,9 +29,39 @@ def select_destination(mode="choose", mountain=False):
     keys = ("lalashan", "baling") if mountain else tuple(DESTINATIONS)
     return card("🧭 想去哪裡？", "點一下目的地", [
         "拉拉山範圍較大，森林遊樂區與上巴陵的目的地不同。" if mountain else
-        "選擇目的地，再查看搭車、開車或路況資訊。其他地點可使用下方地圖查詢。"
+        "先選目的地，再選搭車、開車或路況。查公車時請準備出發地與日期，並先確認回程。其他地點可使用下方地圖查詢。"
     ], [message_button(DESTINATIONS[key], command(key, mode)) for key in keys] +
         ([] if mountain else [uri_button("其他地點｜地圖查詢", "https://www.google.com/maps")]))
+
+
+def bus_summary(destination):
+    """以固定欄位整理已查證的靜態資訊，不推測即時班次。"""
+    if destination == "xiaowulai":
+        return [
+            "🚌 參考路線｜台灣好行 502 小烏來線",
+            "📅 行駛日期｜假日行駛；平日請另查桃園公車可用路線",
+            "📍 搭乘方向｜桃園客運桃園總站 → 小烏來天空步道",
+            "↩️ 回程提醒｜先確認回程站牌、方向與末班時間",
+        ]
+    if destination == "jiaobanshan":
+        return [
+            "🚌 參考路線｜台灣好行 502 小烏來線",
+            "📅 行駛日期｜假日行駛；平日請另查桃園公車可用路線",
+            "🚏 停靠提醒｜沿線包含角板山，請確認站名與搭乘方向",
+            "↩️ 回程提醒｜先確認回程站牌、方向與末班時間",
+        ]
+    if destination == "lalashan":
+        return [
+            "🚌 參考路線｜5090、5091、5301",
+            "📍 下車位置｜官方交通資訊列示終點為林班口",
+            "👣 後續接駁｜林班口並非直達巨木步道，步行或接駁方式仍需確認",
+            "↩️ 回程提醒｜依出發地、日期確認可搭路線與回程班次",
+        ]
+    return [
+        "🔎 查詢方式｜到桃園公車系統搜尋「上巴陵」",
+        "📍 出發資訊｜輸入出發地與日期，再確認可用路線及停靠站",
+        "↩️ 回程提醒｜山區班次有限，請先確認回程末班時間",
+    ]
 
 
 def get_traffic_card(text):
@@ -76,7 +106,10 @@ def get_traffic_card(text):
                message_button("🚗 開車導航", command(destination, "car")),
                message_button("🚧 查道路狀況", command(destination, "road"))]
     if mode == "choose":
-        return card("🧭 " + name, "選擇交通方式", ["你想搭車還是開車前往？點下方按鈕查看。"], choices)
+        return card("🧭 " + name, "選擇交通方式", [
+            "你想搭車還是開車前往？",
+            "搭車請先準備出發地與日期；山區班次較少，記得先查回程。",
+        ], choices)
     if mode == "road":
         return card("🚧 " + name, "出發前看路況", ["山區道路可能因天候或施工調整。", "點下方查最新公告；本字卡不代表道路目前開放。"],
                     [uri_button("公路局｜即時路況", ROAD_URL), message_button("返回交通選單", command(destination, "choose"))])
@@ -89,15 +122,22 @@ def get_traffic_card(text):
     except (OSError, ValueError):
         item = None
     if item is None:
-        return card("🚌 " + name, "查詢適合的班次", ["請在桃園公車系統以「上巴陵」查詢停靠站與路線。" if destination == "baling" else "交通資料暫時讀取不順，可先使用官方查詢。", "選擇出發站與日期，先確認去程與回程。"],
-                    [uri_button("查路線與班次", BUS_URL), message_button("返回交通選單", command(destination, "choose"))])
+        lines = bus_summary(destination) if destination == "baling" else [
+            "交通資料暫時讀取不順，可先使用官方查詢。",
+            "請輸入出發地與日期，並分別確認去程與回程。",
+        ]
+        return card("🚌 " + name, "先查出發地、日期與回程", lines,
+                    [uri_button("🕒 桃園公車｜查班次", BUS_URL),
+                     message_button("🚗 改看開車導航", command(destination, "car")),
+                     message_button("返回交通選單", command(destination, "choose"))])
     # 原資料的路線限制完整保留；主卡精簡，完整說明放下一層。
-    lines = item["notes"] if mode == "detail" else (
-        ["參考路線：5090、5091、5301", "路線終點：林班口", "⚠️ 林班口下車後仍需確認至園區的步行或接駁，並非直達巨木步道。"] if destination == "lalashan" else
-        ["參考路線：台灣好行 502 小烏來線", "⚠️ 502 為假日行駛；平日請另查可用路線。", "桃園客運桃園總站 → 小烏來天空步道" if destination == "xiaowulai" else "沿線包含角板山，請確認停靠站與搭乘方向。"])
-    lines = list(lines) + ["🌷 出發前查好去回程，班次以官方當日公告為準。"]
-    buttons = [uri_button("🕒 查班次與到站", BUS_URL), uri_button("📖 官方路線說明", item["source_url"])]
+    lines = item["notes"] if mode == "detail" else bus_summary(destination)
+    lines = list(lines) + ["ℹ️ 班次、票價與到站時間以官方當日公告為準。"]
+    buttons = [uri_button("🕒 桃園公車｜查班次", BUS_URL), uri_button("📖 官方路線｜看說明", item["source_url"])]
     if mode != "detail":
         buttons.append(message_button("查看搭乘提醒", command(destination, "detail")))
-    buttons.append(message_button("返回交通選單", command(destination, "choose")))
-    return card("🚌 " + name, "搭車參考｜非即時班表", lines, buttons)
+    buttons.append(message_button(
+        "🚗 改看開車導航" if mode != "detail" else "返回交通選單",
+        command(destination, "car" if mode != "detail" else "choose"),
+    ))
+    return card("🚌 " + name, "搭車參考｜先查去程與回程", lines, buttons)

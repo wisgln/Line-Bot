@@ -12,7 +12,9 @@ class TrafficCardsTests(unittest.TestCase):
     def test_bus_destination(self):
         result = self.rendered("從桃園火車站到小烏來怎麼搭車？")
         self.assertIn("502", result)
-        self.assertIn("假日", result)
+        self.assertIn("行駛日期", result)
+        self.assertIn("搭乘方向", result)
+        self.assertIn("回程提醒", result)
         self.assertNotIn("5090", result)
 
     def test_mountain_asks_destination(self):
@@ -23,8 +25,21 @@ class TrafficCardsTests(unittest.TestCase):
 
     def test_forest_connection_warning(self):
         result = self.rendered("拉拉山森林遊樂區公車")
+        self.assertIn("下車位置", result)
+        self.assertIn("後續接駁", result)
         self.assertIn("林班口", result)
         self.assertIn("並非直達", result)
+
+    def test_bus_card_can_switch_to_driving(self):
+        result = self.rendered("小烏來公車")
+        self.assertIn("改看開車導航", result)
+        self.assertIn("交通字卡:xiaowulai:car", result)
+
+    def test_generic_menu_explains_lookup_flow(self):
+        result = self.rendered("交通")
+        self.assertIn("先選目的地", result)
+        self.assertIn("出發地與日期", result)
+        self.assertIn("先確認回程", result)
 
     def test_driving_uri(self):
         result = self.rendered("交通字卡:lalashan:car")
