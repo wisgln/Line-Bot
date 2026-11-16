@@ -2,6 +2,19 @@
 from modules.culture.culture_service import get_culture_by_id
 
 
+# 各文化主題對應的上一層分類
+CULTURE_PARENT = {
+    "culture001": ("文化小知識", "knowledge"),
+    "culture002": ("文化小知識", "knowledge"),
+    "culture003": ("文化小知識", "knowledge"),
+    "culture004": ("文化小知識", "knowledge"),
+    "culture005": ("文化地標", "landmark"),
+    "culture006": ("文化地標", "landmark"),
+    "culture007": ("傳說故事", "story"),
+    "culture008": ("文化地標", "landmark"),
+}
+
+
 def create_culture_flex(culture_id):
     """建立泰雅文化 Flex Message 介紹卡片。"""
 
@@ -14,7 +27,6 @@ def create_culture_flex(culture_id):
 
     hero = None
 
-    # 有 HTTPS 圖片網址時才顯示圖片
     if image_url.startswith("https://"):
         hero = {
             "type": "image",
@@ -24,11 +36,42 @@ def create_culture_flex(culture_id):
             "aspectMode": "cover"
         }
 
+    # 找到這張文化卡片所屬的上一層
+    parent = CULTURE_PARENT.get(culture_id)
+    buttons = []
+
+    if parent:
+        parent_title, parent_category = parent
+
+        buttons.append({
+            "type": "button",
+            "style": "secondary",
+            "height": "sm",
+            "action": {
+                "type": "postback",
+                "label": f"返回{parent_title}",
+                "data": f"culture_category:{parent_category}",
+                "displayText": f"返回{parent_title}"
+            }
+        })
+
+    # 所有文化卡片都能直接返回主選單
+    buttons.append({
+        "type": "button",
+        "style": "secondary",
+        "height": "sm",
+        "action": {
+            "type": "postback",
+            "label": "返回文化主選單",
+            "data": "menu_culture",
+            "displayText": "返回泰雅文化選單"
+        }
+    })
+
     return {
         "type": "bubble",
         "size": "mega",
 
-        # 如果沒有圖片，就不加入 hero
         **({"hero": hero} if hero else {}),
 
         "body": {
@@ -63,24 +106,11 @@ def create_culture_flex(culture_id):
             ]
         },
 
-        # 新增返回文化主選單按鈕
         "footer": {
             "type": "box",
             "layout": "vertical",
             "spacing": "sm",
-            "contents": [
-                {
-                    "type": "button",
-                    "style": "secondary",
-                    "height": "sm",
-                    "action": {
-                        "type": "postback",
-                        "label": "返回文化主選單",
-                        "data": "menu_culture",
-                        "displayText": "返回泰雅文化選單"
-                    }
-                }
-            ]
+            "contents": buttons
         }
     }
 
