@@ -12,6 +12,9 @@ def create_attraction_bubble(attraction):
     opening_hours = attraction.get("opening_hours", "暫無資訊")
     image_url = attraction.get("image_url", "")
     maps_url = attraction.get("maps_url", "")
+    tags = attraction.get("tags", [])
+    accessibility = attraction.get("accessibility", {})
+
 
     if not maps_url:
         maps_url = (
@@ -34,6 +37,32 @@ def create_attraction_bubble(attraction):
             "color": "#888888"
         }
     ]
+
+    # 顯示景點友善標籤
+    if tags:
+        contents.append({
+            "type": "text",
+            "text": "・".join(tags),
+            "size": "sm",
+            "color": "#168A60",
+            "wrap": True,
+            "margin": "md"
+        })
+
+    # 只有已查證的無障礙設施才顯示
+    if isinstance(accessibility, dict):
+        status = accessibility.get("status", "尚未查證")
+        facilities = accessibility.get("facilities", [])
+
+        if status == "已查證" and facilities:
+            contents.append({
+                "type": "text",
+                "text": "♿ 無障礙設施：" + "、".join(facilities),
+                "size": "sm",
+                "color": "#3975B7",
+                "wrap": True,
+                "margin": "md"
+            })
 
     # 景點基本資訊
     info = [
@@ -91,14 +120,86 @@ def create_attraction_bubble(attraction):
 
 
 # 建立可左右滑動的多景點卡片
-def create_attraction_carousel(attractions):
+
+# 建立可以分頁的景點卡片
+def create_attraction_carousel(attractions, page=1):
     if not attractions:
         return None
 
+    page_size = 10
+    total_pages = (len(attractions) + page_size - 1) // page_size
+
+    # 避免頁碼超出範圍
+    page = max(1, min(page, total_pages))
+
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    # 取得目前這一頁的景點
+    current_attractions = attractions[start:end]
+
     bubbles = [
         create_attraction_bubble(attraction)
-        for attraction in attractions[:12]
+        for attraction in current_attractions
     ]
+
+    # 建立翻頁按鈕
+    buttons = []
+
+    if page > 1:
+        buttons.append({
+            "type": "button",
+            "style": "secondary",
+            "action": {
+                "type": "postback",
+                "label": "上一頁",
+                "data": f"attraction_page={page - 1}"
+            }
+        })
+
+    if page < total_pages:
+        buttons.append({
+            "type": "button",
+            "style": "primary",
+            "action": {
+                "type": "postback",
+                "label": "下一頁",
+                "data": f"attraction_page={page + 1}"
+            }
+        })
+
+    # 最後一張卡片放翻頁操作
+    navigation_bubble = {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                {
+                    "type": "text",
+                    "text": "繼續探索復興區",
+                    "weight": "bold",
+                    "size": "lg",
+                    "wrap": True
+                },
+                {
+                    "type": "text",
+                    "text": f"第 {page} / {total_pages} 頁",
+                    "size": "sm",
+                    "color": "#888888",
+                    "margin": "md"
+                }
+            ]
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": buttons
+        }
+    }
+
+    bubbles.append(navigation_bubble)
 
     return {
         "type": "carousel",
