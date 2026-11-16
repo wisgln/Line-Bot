@@ -68,6 +68,46 @@ def get_culture_message(data):
 
 
 # =====================================
+# 2 號：景點導覽分頁（每頁 10 筆）
+# =====================================
+def get_attraction_page_message(page=1):
+    """處理景點導覽主選單與上一頁、下一頁。"""
+    try:
+        from modules.attraction.attraction_service import (
+            get_all_attractions,
+        )
+        from modules.attraction.flex_message import (
+            create_attraction_carousel,
+        )
+
+        attractions = get_all_attractions()
+
+        if not attractions:
+            return None
+
+        total_pages = (len(attractions) + 9) // 10
+
+        if page < 1 or page > total_pages:
+            return None
+
+        carousel = create_attraction_carousel(
+            attractions, page=page
+        )
+
+        if not carousel:
+            return None
+
+        return FlexMessage(
+            alt_text=f"復興區景點導覽 - 第{page}頁",
+            contents=FlexContainer.from_dict(carousel),
+        )
+
+    except Exception:
+        logger.exception("Attraction page failed")
+        return None
+
+
+# =====================================
 # 3 號：LBS 景點分類篩選
 # =====================================
 def get_location_filter_message(data):
@@ -155,6 +195,23 @@ def handle_postback_event(event, configuration):
                 text="附近景點篩選暫時無法使用，請重新傳送位置。"
             )
 
+    # 2 號：景點導覽主選單、上一頁、下一頁
+    elif data == "menu_attraction" or data.startswith("attraction_page="):
+        page = 1
+
+        if data.startswith("attraction_page="):
+            try:
+                page = int(data.split("=", 1)[1])
+            except ValueError:
+                page = 0
+
+        message = get_attraction_page_message(page)
+
+        if message is None:
+            message = TextMessage(
+                text="景點導覽暫時無法顯示，請稍後再試。"
+            )
+
     # 4 號：泰雅文化選單、介紹、Quiz 與下一題
     elif data == "menu_culture" or data.startswith("culture_"):
         message = get_culture_message(data)
@@ -168,12 +225,6 @@ def handle_postback_event(event, configuration):
     elif data == "menu_nearby":
         message = TextMessage(
             text="請傳送你的目前位置，我幫你找附近景點！"
-        )
-
-    # 景點導覽入口
-    elif data == "menu_attraction":
-        message = TextMessage(
-            text="景點導覽功能準備中"
         )
 
     # AI 問答入口

@@ -1,4 +1,4 @@
-"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
+﻿"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
 
 import logging
 import re
@@ -70,11 +70,11 @@ def get_attraction_message():
             create_attraction_carousel,
         )
 
-        attractions = get_all_attractions()[:12]
+        attractions = get_all_attractions()
         if not attractions:
             return None
 
-        carousel = create_attraction_carousel(attractions)
+        carousel = create_attraction_carousel(attractions, page=1)
 
         return FlexMessage(
             alt_text="復興區景點導覽",
