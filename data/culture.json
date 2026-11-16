@@ -10,7 +10,7 @@
         "id": "culture002",
         "title": "泰雅族傳統織布",
         "category": "傳統工藝",
-        "description": "織布是泰雅族重要的傳統文化技藝之一。傳統上，泰雅族婦女運用苧麻等材料製作織品，透過不同的色彩與幾何圖紋展現工藝特色。織布不僅具有生活實用價值，也承載家族記憶、文化知識與世代傳承的意義。",
+        "description": "泰雅族傳統織布是重要的文化技藝，過去常使用苧麻等天然材料製作服飾與織品。織布上的菱形紋在部分傳統文化詮釋中象徵祖靈之眼，代表祖靈對後代的守護與提醒。織布不只是日常生活用品，更承載文化記憶、身分認同與世代傳承的意義。",
         "image_url": "https://raw.githubusercontent.com/wisgln/Line-Bot/feature-culture/static/images/culture/atayal_weaving.jpg"
     },
     {
@@ -45,7 +45,7 @@
         "id": "culture007",
         "title": "泰雅族彩虹橋傳說",
         "category": "文化故事",
-        "description": "在泰雅族的部分傳統敘事中，彩虹橋象徵通往祖靈世界的道路。故事中，族人若遵循 Gaya 所重視的生活規範，並展現勤勞、勇敢及負責任的精神，便有機會在離世後通過彩虹橋與祖靈相聚。不同部落對彩虹橋的敘述可能有所差異，這些故事傳達了泰雅族對祖靈、倫理規範與生命的重視。",
+        "description": "在泰雅族的部分傳統傳說中，彩虹橋被視為通往祖靈世界的橋梁。相傳族人在離開人世後，必須通過彩虹橋，才能與祖靈相聚。這座橋也象徵對生前行為與傳統規範的考驗，提醒族人遵循 Gaya，重視責任、勤勞與族群倫理。不同部落流傳的故事版本可能有所不同，但都呈現了泰雅族對祖靈與生命的敬重。",
         "image_url": "https://raw.githubusercontent.com/wisgln/Line-Bot/feature-culture/static/images/culture/atayal_rainbow.png"
     },
     {
