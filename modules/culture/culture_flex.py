@@ -6,7 +6,7 @@ from modules.culture.culture_service import (
 
 
 def create_culture_flex(culture_id):
-    """建立泰雅文化介紹卡片。"""
+    """建立泰雅文化介紹卡片，包含語音導覽按鈕。"""
 
     culture = get_culture_by_id(culture_id)
 
@@ -71,6 +71,18 @@ def create_culture_flex(culture_id):
             "contents": [
                 {
                     "type": "button",
+                    "style": "primary",
+                    "color": "#168A56",
+                    "height": "sm",
+                    "action": {
+                        "type": "postback",
+                        "label": "聆聽語音導覽",
+                        "data": f"culture_audio:{culture_id}",
+                        "displayText": f"播放{culture['title']}語音導覽"
+                    }
+                },
+                {
+                    "type": "button",
                     "style": "secondary",
                     "height": "sm",
                     "action": {
@@ -92,7 +104,7 @@ def create_culture_menu():
 
     buttons = []
 
-    # 八個文化主題：點擊後直接顯示介紹
+    # 8 個文化主題：點擊後直接顯示介紹
     for culture in cultures:
         buttons.append({
             "type": "button",
@@ -106,7 +118,7 @@ def create_culture_menu():
             }
         })
 
-    # 只有點擊這個按鈕才開始問答
+    # 只有使用者點擊才開始知識挑戰
     buttons.append({
         "type": "button",
         "style": "primary",

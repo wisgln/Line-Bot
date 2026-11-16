@@ -69,6 +69,24 @@ def get_culture_message(data):
 
 
 # =====================================
+# 4 號：泰雅文化語音導覽
+# =====================================
+def get_culture_audio_reply(data):
+    """建立對應文化主題的 LINE AudioMessage。"""
+    try:
+        from modules.culture.culture_audio import (
+            get_culture_audio_message,
+        )
+
+        culture_id = data.split(":", 1)[1]
+        return get_culture_audio_message(culture_id)
+
+    except Exception:
+        logger.exception("Culture audio failed")
+        return None
+
+
+# =====================================
 # 3 號：LBS 景點分類篩選
 # =====================================
 def get_location_filter_message(data):
@@ -124,6 +142,16 @@ def handle_postback_event(event, configuration):
         if message is None:
             message = TextMessage(
                 text="附近景點篩選暫時無法使用，請重新傳送位置。"
+            )
+
+    # 4 號：泰雅文化語音導覽
+    # 注意：必須放在 culture_ 的判斷前面
+    elif data.startswith("culture_audio:"):
+        message = get_culture_audio_reply(data)
+
+        if message is None:
+            message = TextMessage(
+                text="語音導覽暫時無法播放，請稍後再試。"
             )
 
     # 4 號：泰雅文化選單、介紹、Quiz 與下一題

@@ -4,3 +4,4 @@ requests
 python-dotenv
 truststore
 groq
+mutagen==1.48.1
