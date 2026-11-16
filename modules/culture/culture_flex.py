@@ -1,22 +1,12 @@
 
-from modules.culture.culture_service import get_culture_by_id
-
-
-# 各文化主題對應的上一層分類
-CULTURE_PARENT = {
-    "culture001": ("文化小知識", "knowledge"),
-    "culture002": ("文化小知識", "knowledge"),
-    "culture003": ("文化小知識", "knowledge"),
-    "culture004": ("文化小知識", "knowledge"),
-    "culture005": ("文化地標", "landmark"),
-    "culture006": ("文化地標", "landmark"),
-    "culture007": ("傳說故事", "story"),
-    "culture008": ("文化地標", "landmark"),
-}
+from modules.culture.culture_service import (
+    get_culture_by_id,
+    load_culture_data,
+)
 
 
 def create_culture_flex(culture_id):
-    """建立泰雅文化 Flex Message 介紹卡片。"""
+    """建立泰雅文化介紹卡片。"""
 
     culture = get_culture_by_id(culture_id)
 
@@ -35,38 +25,6 @@ def create_culture_flex(culture_id):
             "aspectRatio": "20:13",
             "aspectMode": "cover"
         }
-
-    # 找到這張文化卡片所屬的上一層
-    parent = CULTURE_PARENT.get(culture_id)
-    buttons = []
-
-    if parent:
-        parent_title, parent_category = parent
-
-        buttons.append({
-            "type": "button",
-            "style": "secondary",
-            "height": "sm",
-            "action": {
-                "type": "postback",
-                "label": f"返回{parent_title}",
-                "data": f"culture_category:{parent_category}",
-                "displayText": f"返回{parent_title}"
-            }
-        })
-
-    # 所有文化卡片都能直接返回主選單
-    buttons.append({
-        "type": "button",
-        "style": "secondary",
-        "height": "sm",
-        "action": {
-            "type": "postback",
-            "label": "返回文化主選單",
-            "data": "menu_culture",
-            "displayText": "返回泰雅文化選單"
-        }
-    })
 
     return {
         "type": "bubble",
@@ -110,35 +68,57 @@ def create_culture_flex(culture_id):
             "type": "box",
             "layout": "vertical",
             "spacing": "sm",
-            "contents": buttons
+            "contents": [
+                {
+                    "type": "button",
+                    "style": "secondary",
+                    "height": "sm",
+                    "action": {
+                        "type": "postback",
+                        "label": "返回泰雅文化選單",
+                        "data": "menu_culture",
+                        "displayText": "返回泰雅文化選單"
+                    }
+                }
+            ]
         }
     }
 
 
 def create_culture_menu():
-    """建立泰雅文化四大分類主選單。"""
+    """顯示八個文化主題及最下方的知識挑戰。"""
 
-    menu_items = [
-        ("文化小知識", "culture_category:knowledge"),
-        ("文化問答", "culture_quiz_next:quiz001"),
-        ("傳說故事", "culture_category:story"),
-        ("文化地標", "culture_category:landmark"),
-    ]
+    cultures = load_culture_data()
 
     buttons = []
 
-    for label, data in menu_items:
+    # 八個文化主題：點擊後直接顯示介紹
+    for culture in cultures:
         buttons.append({
             "type": "button",
             "style": "secondary",
             "height": "sm",
             "action": {
                 "type": "postback",
-                "label": label,
-                "data": data,
-                "displayText": label
+                "label": culture["title"],
+                "data": f"culture_view:{culture['id']}",
+                "displayText": f"我想了解{culture['title']}"
             }
         })
+
+    # 只有點擊這個按鈕才開始問答
+    buttons.append({
+        "type": "button",
+        "style": "primary",
+        "color": "#168A56",
+        "height": "sm",
+        "action": {
+            "type": "postback",
+            "label": "泰雅文化知識挑戰",
+            "data": "culture_quiz_next:quiz001",
+            "displayText": "開始泰雅文化知識挑戰"
+        }
+    })
 
     return {
         "type": "bubble",
@@ -158,7 +138,7 @@ def create_culture_menu():
                 },
                 {
                     "type": "text",
-                    "text": "一起認識復興區的泰雅文化！",
+                    "text": "選擇想認識的泰雅文化主題",
                     "size": "sm",
                     "color": "#777777",
                     "wrap": True
