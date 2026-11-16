@@ -138,16 +138,59 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
     )
     plan_request = planning or editing_plan
 
-    # 道路安全查詢保留官方查詢回覆。
+    # 道路安全查詢優先提供官方查詢回覆。
     urgent_road = any(
         word in query
         for word in ("封路", "道路管制", "通車", "路況")
     )
+
     if urgent_road:
         traffic_reply = get_traffic_reply(text)
         if traffic_reply is not None:
             return traffic_reply
-        return get_traffic_reply(f"交通 {text}")
+        return get_traffic_reply(f"交通 {text}") or FALLBACK
+
+    # 已在規劃時，區分交通提問與交通方式的補充。
+    # 「我們開車，不想走很多路」是補充條件，應交給 AI。
+    # 「小烏來怎麼搭車」是交通查詢，應交給交通模組。
+    traffic_question = any(
+        word in query
+        for word in (
+            "交通",
+            "怎麼搭",
+            "怎麼去",
+            "怎麼到",
+            "怎麼走",
+            "如何搭",
+            "如何去",
+            "如何到",
+            "如何前往",
+            "班次",
+            "時刻表",
+            "末班車",
+            "首班車",
+            "到站",
+            "票價",
+            "車資",
+            "轉乘",
+            "哪裡搭",
+            "哪裡上車",
+            "幾點",
+            "多久",
+            "停車場",
+            "哪裡停車",
+            "公車路線",
+        )
+    ) or query in DIRECT_QUERIES
+
+    # 單純交通查詢優先於 AI 對話，不修改已儲存的行程。
+    if not plan_request and (not active_session or traffic_question):
+        traffic_reply = get_traffic_reply(text)
+        if traffic_reply is not None:
+            return traffic_reply
+
+        if intent == "traffic":
+            return get_traffic_reply(f"交通 {text}") or FALLBACK
 
     # 一般活動查詢走資料模組；加入行程則交給規劃處理。
     if not plan_request:
@@ -155,8 +198,8 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
         if events_reply is not None:
             return events_reply
 
-    # 一般天氣問題使用天氣模組，避免 AI 假裝查到即時天氣。
-    # 包含「下雨時修改行程」等規劃需求則仍可交給 AI。
+    # 一般天氣問題使用天氣模組。
+    # 「下雨時修改行程」等規劃需求仍可交給 AI。
     if intent == "weather" and not plan_request:
         from modules.weather.weather_service import get_weather_reply
 
@@ -166,8 +209,14 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
     if "優惠券" in query:
         return PENDING["merchant"]
 
+    if not plan_request:
+        from .query_context import local_lookup
+        local_answer = local_lookup(text, faq_path)
+        if local_answer is not None:
+            return local_answer
+
     # 規劃問題與後續討論優先於餐廳、住宿等單一分類。
-    # 原本的直接查詢詞仍可隨時使用。
+    # 明確的獨立查詢已在上方處理。
     if (
         enabled()
         and query not in DIRECT_QUERIES
@@ -177,12 +226,13 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
         if reply is not None:
             return reply
 
+    # AI 未啟用或未回覆時，保留原本交通查詢能力。
     traffic_reply = get_traffic_reply(text)
     if traffic_reply is not None:
         return traffic_reply
 
     if intent == "traffic":
-        return get_traffic_reply(f"交通 {text}")
+        return get_traffic_reply(f"交通 {text}") or FALLBACK
 
     try:
         answer = find_answer(text, load_faq(faq_path))
@@ -207,12 +257,14 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
         logger.exception("Unable to load merchant data")
         merchants = []
 
+    # 分類詞本身優先，不被含有分類名稱的店名攔截。
     if query in {"民宿", "住宿", "推薦民宿"}:
         return get_merchant_reply("民宿")
 
     if query in {"餐廳", "推薦餐廳", "找餐廳", "美食", "推薦美食"}:
         return get_merchant_reply("餐廳")
 
+    # 完整店名優先。
     for merchant in merchants:
         if normalize(merchant["name"]) == query:
             return get_merchant_reply(merchant["name"])
@@ -232,6 +284,7 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
         lines.extend(f"・{name}" for name in matched_names[:10])
         return "\n".join(lines)
 
+    # 店名查詢後，再處理一般農特產問題。
     product_reply = get_local_products_reply(text)
     if product_reply is not None:
         return product_reply
