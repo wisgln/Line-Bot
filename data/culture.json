@@ -25,21 +25,21 @@
         "title": "泰雅族歷史與遷徙",
         "category": "文化歷史",
         "description": "泰雅族的歷史與臺灣山區的遷徙、聚落形成及自然環境密切相關。不同泰雅族群體流傳著各自的祖源與遷徙故事，並逐漸在北部及中部山區建立聚落。桃園市復興區的泰雅族部落也保有地方歷史記憶、傳統地名與文化知識。認識這些故事，有助於了解族人與土地之間的深厚連結。",
-        "image_url": ""
+        "image_url": "https://raw.githubusercontent.com/wisgln/Line-Bot/feature-culture/static/images/culture/atayal_history.png"
     },
     {
         "id": "culture005",
         "title": "角板山與復興區泰雅文化",
         "category": "在地部落文化",
         "description": "桃園市復興區是泰雅族的重要生活與文化區域之一。角板山一帶具有泰雅族歷史與地方文化特色，也是旅客認識復興區的重要入口。透過認識當地的文化展示、傳統工藝與部落生活，可以進一步了解泰雅族與山林環境的密切關係。參訪時應尊重部落生活空間與文化規範。",
-        "image_url": ""
+        "image_url": "https://raw.githubusercontent.com/wisgln/Line-Bot/feature-culture/static/images/culture/jiaobanshan.png"
     },
     {
         "id": "culture006",
         "title": "復興區泰雅族部落介紹",
         "category": "部落文化",
         "description": "桃園市復興區有許多具有泰雅族文化特色的部落，例如羅浮、溪口等地。各部落擁有不同的歷史背景、生活方式與地方特色。泰雅族傳統生活與山林、河流及自然環境密切相關，透過認識部落，可以更深入了解當地族人的文化與生活。",
-        "image_url": ""
+        "image_url": "https://raw.githubusercontent.com/wisgln/Line-Bot/feature-culture/static/images/culture/atayal_village.png"
     },
     {
         "id": "culture007",
