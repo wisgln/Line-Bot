@@ -34,30 +34,28 @@ def get_ai_reply(text, session_id=None):
         return "🌿 暫時無法回答，請稍後再試一次。"
 
 
+
 def get_culture_messages():
-    """泰雅文化主題選單，加上第一題 Quiz。"""
+    """點擊泰雅文化時，只顯示文化主選單。"""
     try:
         from modules.culture.culture_flex import create_culture_menu
-        from modules.culture.quiz import create_quiz_flex
 
-        messages = []
+        menu_data = create_culture_menu()
 
-        for data, title in (
-            (create_culture_menu(), "泰雅文化探索"),
-            (create_quiz_flex("quiz001"), "泰雅文化知識挑戰"),
-        ):
-            if data:
-                messages.append(
-                    FlexMessage(
-                        alt_text=title,
-                        contents=FlexContainer.from_dict(data),
-                    )
-                )
+        if not menu_data:
+            return []
 
-        return messages
+        return [
+            FlexMessage(
+                alt_text="泰雅文化探索選單",
+                contents=FlexContainer.from_dict(menu_data),
+            )
+        ]
+
     except Exception:
-        logger.exception("Culture cards failed")
+        logger.exception("Culture menu failed")
         return []
+
 
 
 def get_attraction_message():
