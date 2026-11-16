@@ -6,7 +6,7 @@ from linebot.v3.messaging import AudioMessage
 # 已上傳 GitHub 的公開 MP3 網址
 AUDIO_BASE_URL = (
     "https://raw.githubusercontent.com/"
-    "wisgln/Line-Bot/feature-culture/static/audio/culture"
+    "wisgln/Line-Bot/develop/static/audio/culture"
 )
 
 # 本機語音檔位置
