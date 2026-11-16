@@ -6,10 +6,12 @@ from unittest.mock import MagicMock, patch
 
 from modules.ai_service.openai_reply import get_openai_reply
 from modules.ai_service.openai_reply import (
+    INSTRUCTIONS as OPENAI_INSTRUCTIONS,
     ITINERARY_FORMAT,
     create_json_response,
     create_text_response,
 )
+from modules.ai_service.groq_reply import CHAT_PROMPT, PROMPT
 from modules.ai_service import get_reply
 from modules.ai_service.ai_service import FALLBACK
 from modules.ai_service import gemini_reply as planning_core
@@ -144,6 +146,16 @@ class OpenAITests(unittest.TestCase):
             max_output_tokens=500,
             store=False,
         )
+
+    def test_prompts_allow_on_topic_questions_and_refuse_off_topic(self):
+        for prompt in (OPENAI_INSTRUCTIONS, CHAT_PROMPT, PROMPT):
+            with self.subTest(prompt=prompt[:40]):
+                self.assertIn('使用者可以自由提問', prompt)
+                self.assertIn('泰雅文化', prompt)
+                self.assertIn('旅遊準備', prompt)
+                self.assertIn('復興區專屬旅遊小幫手', prompt)
+                self.assertIn('不在我的服務範圍內', prompt)
+                self.assertIn('若問題只有部分離題', prompt)
 
 
 if __name__ == '__main__':
