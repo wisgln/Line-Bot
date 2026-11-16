@@ -1,4 +1,4 @@
-"""旅遊問答、精簡參考資料與行程記憶；支援 Groq 與原 Gemini 接口。"""
+"""旅遊問答、精簡參考資料與行程記憶；支援 OpenAI、Groq 與 Gemini。"""
 
 import copy
 import json
@@ -153,9 +153,9 @@ stops永遠是完整目前行程，最多12站。
 
 
 def enabled():
-    from .groq_reply import enabled as groq_enabled
+    from .groq_reply import enabled as provider_enabled
 
-    if groq_enabled():
+    if provider_enabled():
         return True
 
     return (
@@ -357,10 +357,10 @@ def decode_plan(answer, context):
 
 def get_gemini_reply(text, *, session_id=None):
     """保留原函式名稱，避免破壞現有入口和字卡。"""
-    from .groq_reply import enabled as groq_enabled, get_groq_reply
+    from .groq_reply import enabled as provider_enabled, get_groq_reply
 
-    # Groq 啟用時只使用 Groq，不自動退回其他服務。
-    if groq_enabled():
+    # 選定 OpenAI/Groq 時不自動退回其他付費服務。
+    if provider_enabled():
         return get_groq_reply(text, session_id=session_id)
 
     if not enabled():

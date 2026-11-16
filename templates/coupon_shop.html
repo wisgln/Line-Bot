@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173e36">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{{ coupon.product_name }}｜復興好禮</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/coupon-shop.css') }}">
+</head>
+<body class="theme-{{ theme }}">
+  <div class="site-shell" id="shop" data-coupon-id="{{ coupon.id }}" data-expired="{{ 'true' if expired else 'false' }}" data-unit-price="{{ coupon.original_price }}" data-min-spend="{{ coupon.min_spend }}" data-quantity-unit="{{ '位' if coupon.category == '在地體驗' else '件' }}">
+    <header class="topbar">
+      <a class="wordmark" href="#shop" aria-label="復興好禮首頁"><span class="brand-glyph">✦</span> 復興好禮 <span class="brand-en">FUXING SELECT</span></a>
+      <span class="demo-chip">學生專題展示</span>
+    </header>
+    <main>
+      <nav aria-label="所在位置" class="breadcrumbs"><span>復興好禮</span><span class="sep">/</span><span>{{ coupon.category }}</span><span class="sep">/</span><span>商品體驗</span></nav>
+      <div class="shop-grid">
+        <section class="product" aria-labelledby="product-title">
+          <div class="product-visual" role="img" aria-label="{{ product_label }}的風格示意圖，非商品實拍">
+            <div class="visual-circle c1"></div><div class="visual-circle c2"></div><div class="visual-circle c3"></div>
+            <span class="visual-tag">復興區 · {{ coupon.category }}</span>
+            <div class="visual-icon" aria-hidden="true">{{ motif }}</div>
+            <div class="visual-label">{{ product_label }}</div>
+            <span class="visual-hint">產品情境視覺 · 非實拍</span>
+          </div>
+          <div class="product-body">
+            <div class="eyebrow">復興好禮 / {{ coupon.category }}</div>
+            <h1 id="product-title">{{ coupon.product_name }}</h1>
+            <p class="product-description">{{ coupon.description }}</p>
+            <div class="features"><span>✦ 地方選物概念</span><span>✦ 觀光導購體驗</span><span>✦ 無實際交易</span></div>
+            <div class="product-about">
+              <h2>關於這份好禮</h2>
+              <p>我們把復興區的農產、伴手禮和文化體驗轉換成容易瀏覽的手機購物情境，示範在 LINE 領取優惠後，如何確認價格與折扣。</p>
+              <p>商品名稱與售價是專題情境資料，不代表有現貨、真實店家或可提供的服務。</p>
+            </div>
+          </div>
+        </section>
+        <aside class="checkout" aria-labelledby="coupon-title">
+          <div class="checkout-inner">
+            <div class="offer-row"><span class="offer-kicker">優惠資訊</span><span class="offer-pill">優惠試算</span></div>
+            <h2 id="coupon-title">{{ coupon.title }}</h2>
+            <div class="offer-value">{{ coupon.discount_text }}</div>
+            <p class="offer-rule">{{ coupon.conditions }}</p>
+            <div class="line"></div>
+            <div class="price-heading"><h3>商品金額</h3><span>新臺幣 NT$</span></div>
+            <div class="price-row"><span>{{ '每人費用' if coupon.category == '在地體驗' else '商品單價' }}</span><strong>NT$ {{ '{:,}'.format(coupon.original_price) }}</strong></div>
+            <div class="quantity-row"><label for="quantity">{{ '體驗人數' if coupon.category == '在地體驗' else '商品數量' }}</label><div class="stepper"><button id="decrease" type="button" aria-label="減少數量">−</button><output id="quantity-value">1</output><button id="increase" type="button" aria-label="增加數量">＋</button></div></div>
+            <input id="quantity" type="hidden" value="1" aria-label="{{ '體驗人數' if coupon.category == '在地體驗' else '商品數量' }}">
+            <div class="line"></div>
+            <div class="price-row"><span>{{ '體驗小計' if coupon.category == '在地體驗' else '商品小計' }}</span><strong id="subtotal">NT$ {{ '{:,}'.format(quote.original) }}</strong></div>
+            <div class="price-row discount"><span>優惠折抵</span><strong id="discount">− NT$ {{ '{:,}'.format(quote.discount) }}</strong></div>
+            <p id="threshold-hint" class="threshold-hint" {{ '' if coupon.min_spend else 'hidden' }} aria-live="polite"></p>
+            <div class="grand-total"><div><span>折後總計</span><small>展示試算金額</small></div><strong id="total">NT$ {{ '{:,}'.format(quote.total) }}</strong></div>
+            <div class="expiry">優惠期限：{{ coupon.valid_until }}</div>
+            <p id="status" class="status" role="status" aria-live="polite"></p>
+            <button id="complete" type="button" class="complete" {{ 'disabled' if expired else '' }}>{{ '優惠已到期' if expired else '完成結帳體驗' }} <span aria-hidden="true">↗</span></button>
+            <div class="demo-note"><span>ⓘ</span> 本頁僅模擬商品折扣與結帳，不提供付款、實際優惠或商家核銷。</div>
+          </div>
+          <div class="checkout-footer"><span>FUXING SELECT</span><span>DESIGNED FOR DISCOVERY</span></div>
+        </aside>
+      </div>
+      <section id="receipt" class="receipt" hidden tabindex="-1" aria-live="polite">
+        <div class="receipt-check">✓</div>
+        <p class="eyebrow">優惠體驗紀錄</p>
+        <h2>體驗完成</h2>
+        <p>已成功完成折扣試算，沒有產生訂單、付款或實際核銷。</p>
+        <div class="receipt-line"><span>體驗商品</span><strong id="receipt-name"></strong></div>
+        <div class="receipt-line"><span>{{ '體驗人數' if coupon.category == '在地體驗' else '數量' }}</span><strong id="receipt-quantity"></strong></div>
+        <div class="receipt-line"><span>本次折後總額</span><strong id="receipt-total"></strong></div>
+        <button id="again" type="button" class="again">再看一次優惠</button>
+      </section>
+    </main>
+    <footer class="footer"><span>文藝復興之旅 · 復興區智慧觀光 LINE Bot</span><span>學生專題功能展示</span></footer>
+  </div>
+  <script src="{{ url_for('static', filename='js/coupon-shop.js') }}" defer></script>
+</body>
+</html>

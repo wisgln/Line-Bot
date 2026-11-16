@@ -1,3 +1,4 @@
+
 line-bot-sdk==3.7
 flask==3.0.0
 requests
@@ -5,3 +6,4 @@ python-dotenv
 truststore
 groq
 mutagen==1.48.1
+openai

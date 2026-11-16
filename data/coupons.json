@@ -1,0 +1,47 @@
+[
+  {
+    "id": "coupon_001",
+    "title": "復興農產好禮",
+    "category": "農特產",
+    "discount_text": "滿 NT$500 折 NT$50",
+    "description": "用一份地方好禮，認識復興的農產風味。",
+    "conditions": "僅適用本專題展示的示例商品，不可於任何實體店家折抵。",
+    "valid_until": "2026-12-31",
+    "demo_only": true,
+    "product_name": "復興農產禮盒（示例）",
+    "original_price": 320,
+    "discount_type": "fixed",
+    "discount_value": 50,
+    "min_spend": 500
+  },
+  {
+    "id": "coupon_002",
+    "title": "山裡好物優惠",
+    "category": "伴手禮",
+    "discount_text": "享 9 折優惠",
+    "description": "把旅途中的山林滋味帶回家。",
+    "conditions": "僅適用本專題展示的示例商品，不可於任何實體店家折抵。",
+    "valid_until": "2026-12-31",
+    "demo_only": true,
+    "product_name": "山林果乾禮盒（示例）",
+    "original_price": 360,
+    "discount_type": "percent",
+    "discount_value": 10,
+    "min_spend": 0
+  },
+  {
+    "id": "coupon_003",
+    "title": "泰雅風味體驗",
+    "category": "在地體驗",
+    "discount_text": "現折 NT$50",
+    "description": "從文化與風味出發，體驗復興的另一面。",
+    "conditions": "僅適用本專題展示的示例商品，不可於任何實體店家折抵。",
+    "valid_until": "2026-12-31",
+    "demo_only": true,
+    "product_name": "泰雅風味體驗方案（示例）",
+    "original_price": 450,
+    "discount_type": "fixed",
+    "discount_value": 50,
+    "min_spend": 0
+  }
+]

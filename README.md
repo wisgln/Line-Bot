@@ -122,9 +122,13 @@ CHANNEL_SECRET=
 WEATHER_API_KEY=
 GOOGLE_MAPS_API_KEY=
 AI_API_KEY=
+OPENAI_ENABLED=true
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4.1-mini
 ```
 
 `.env` 已加入 `.gitignore`，不會被上傳，請勿把金鑰直接寫死在程式碼裡。
+OpenAI 為主要行程規劃提供者；啟用時請將其他 AI 提供者設為停用，避免路由不明。
 
 ---
 
@@ -135,3 +139,21 @@ AI_API_KEY=
 - 不隨意更改共同資料格式（尤其是景點 JSON 格式）
 - 每完成一個小功能就 commit，不要等全部做完才第一次 merge
 - 確保自己的功能可以被其他模組 import 使用
+
+
+## 優惠券商品展示頁（學生專題）
+
+優惠券列表由 LINE 旅遊助手進入，領取後可按「立即使用」開啟手機版商品展示頁。
+可調整數量、查看原價與折扣、完成**不產生訂單**的展示體驗；沒有付款或實體商家核銷。
+
+- 範例路徑：`/coupon/shop/coupon_001`
+- API：`GET /api/coupon/quote/<coupon_id>?quantity=2`
+- 展示完成：`POST /api/coupon/complete/<coupon_id>`，只接受整數數量，沒有付款或存檔
+- 折扣由 `modules/coupon/coupon_service.py` 計算，數量限 1–10 件
+- 已領取是 LINE 卡片中的展示狀態，**未永久儲存，不能宣稱會員已持有、一次性核銷或正式購物功能**
+- LINE 網址優先用 `COUPON_PUBLIC_BASE_URL`（每個環境設定各自 HTTPS 網域），否則使用 Vercel 的 `VERCEL_URL`。
+  如果兩者都沒設定，LINE 卡片保留原本的快速試算按鈕，不會輸出錯誤連結。
+- 若使用 Vercel 系統環境變數，請確認 Vercel 專案有啟用 Automatically expose System Environment Variables；Preview 頁面需確認團隊存取保護設定。
+- 網頁的商品圖案是 CSS/emoji 情境視覺，不是真正店家照片，之後可自行置換授權圖片。
+
+測試：`python -m pytest -q -p no:cacheprovider`。

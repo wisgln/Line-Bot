@@ -42,7 +42,7 @@ PENDING = {
         "出發前請查閱該景點官方公告。"
     ),
     "merchant": (
-        "目前提供商家資料查詢，尚未提供優惠券服務。"
+        "目前提供專題展示優惠券，請輸入「優惠券」或從「旅遊助手」選擇優惠券專區。"
         "可輸入「餐廳」「民宿」或店家名稱查詢。"
     ),
     "attraction": (
@@ -205,8 +205,9 @@ def get_reply(text: str, *, faq_path=None, session_id=None) -> str:
 
         return get_weather_reply()
 
-    # 優惠券未提供，不讓 AI 或商家清單冒充優惠資訊。
-    if "優惠券" in query:
+    # 優惠券查詢提供正確入口，避免使用舊版「尚未提供」回覆。
+    # 同時保留 AI 行程規劃的語境，不攔截包含優惠券的行程需求。
+    if ("優惠券" in query or "折價券" in query) and not plan_request:
         return PENDING["merchant"]
 
     if not plan_request:

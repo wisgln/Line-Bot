@@ -17,6 +17,101 @@ INSTRUCTIONS = '''你是桃園復興區旅遊助手。以繁體中文、親切�
 不能代訂、購買、報案或發放優惠券。不要聲稱已完成任何操作。
 每次為獨立問答，沒有上一輪記憶。回答控制在700中文字內。'''
 
+ITINERARY_FORMAT = {
+    "type": "json_schema",
+    "name": "itinerary_response",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": ["answer", "update"],
+            },
+            "message": {"type": "string"},
+            "stops": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "kind": {
+                            "type": "string",
+                            "enum": ["attraction", "other"],
+                        },
+                        "id": {
+                            "type": ["string", "null"],
+                        },
+                        "name": {
+                            "type": ["string", "null"],
+                        },
+                        "time": {"type": "string"},
+                        "note": {"type": "string"},
+                    },
+                    "required": [
+                        "kind", "id", "name", "time", "note"
+                    ],
+                    "additionalProperties": False,
+                },
+            },
+        },
+        "required": ["action", "message", "stops"],
+        "additionalProperties": False,
+    },
+}
+
+
+def enabled():
+    """Whether OpenAI is the explicitly selected AI provider."""
+    return os.getenv('OPENAI_ENABLED', '').strip().lower() in ('1', 'true')
+
+
+def create_json_response(messages):
+    """Call OpenAI Responses API for the shared itinerary JSON contract."""
+    key = os.getenv('OPENAI_API_KEY', '').strip()
+    model = os.getenv('OPENAI_MODEL', 'gpt-4.1-mini').strip()
+    if not key or not model:
+        raise ValueError('OpenAI configuration is incomplete')
+    if not messages or messages[0].get('role') != 'system':
+        raise ValueError('System instructions are required')
+
+    # Import lazily so local rule-based features still work without the SDK.
+    from openai import OpenAI
+
+    with OpenAI(api_key=key, timeout=30.0, max_retries=0) as client:
+        response = client.responses.create(
+            model=model,
+            instructions=messages[0]['content'],
+            input=messages[1:],
+            text={"format": ITINERARY_FORMAT},
+            max_output_tokens=2000,
+            store=False,
+        )
+
+    return response.status, response.output_text
+
+
+def create_text_response(messages):
+    """Call OpenAI for concise natural-language travel conversation."""
+    key = os.getenv('OPENAI_API_KEY', '').strip()
+    model = os.getenv('OPENAI_MODEL', 'gpt-4.1-mini').strip()
+    if not key or not model:
+        raise ValueError('OpenAI configuration is incomplete')
+    if not messages or messages[0].get('role') != 'system':
+        raise ValueError('System instructions are required')
+
+    from openai import OpenAI
+
+    with OpenAI(api_key=key, timeout=30.0, max_retries=0) as client:
+        response = client.responses.create(
+            model=model,
+            instructions=messages[0]['content'],
+            input=messages[1:],
+            max_output_tokens=500,
+            store=False,
+        )
+
+    return response.status, response.output_text
+
 
 def build_context():
     """Only allowlisted public project data; never read .env or user records."""

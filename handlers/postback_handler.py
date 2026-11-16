@@ -87,6 +87,46 @@ def get_culture_audio_reply(data):
 
 
 # =====================================
+# 2 號：景點導覽分頁（每頁 10 筆）
+# =====================================
+def get_attraction_page_message(page=1):
+    """處理景點導覽主選單與上一頁、下一頁。"""
+    try:
+        from modules.attraction.attraction_service import (
+            get_all_attractions,
+        )
+        from modules.attraction.flex_message import (
+            create_attraction_carousel,
+        )
+
+        attractions = get_all_attractions()
+
+        if not attractions:
+            return None
+
+        total_pages = (len(attractions) + 9) // 10
+
+        if page < 1 or page > total_pages:
+            return None
+
+        carousel = create_attraction_carousel(
+            attractions, page=page
+        )
+
+        if not carousel:
+            return None
+
+        return FlexMessage(
+            alt_text=f"復興區景點導覽 - 第{page}頁",
+            contents=FlexContainer.from_dict(carousel),
+        )
+
+    except Exception:
+        logger.exception("Attraction page failed")
+        return None
+
+
+# =====================================
 # 3 號：LBS 景點分類篩選
 # =====================================
 def get_location_filter_message(data):
@@ -121,13 +161,43 @@ def get_nearby_restaurant_message(data):
 
 
 # =====================================
+# 優惠券功能
+# =====================================
+def get_coupon_message(data):
+    """專題示範優惠券流程。"""
+    try:
+        from modules.coupon.coupon_postback import handle_coupon_postback
+
+        return handle_coupon_postback(data)
+
+    except Exception:
+        logger.exception("Coupon postback failed")
+        return None
+
+
+# =====================================
 # LINE Bot Postback 統一處理入口
 # =====================================
 def handle_postback_event(event, configuration):
     data = event.postback.data
 
+    # 優惠券專區
+    if (
+        data == "coupon_list"
+        or data.startswith("coupon_detail&")
+        or data.startswith("coupon_claim&")
+        or data.startswith("coupon_use&")
+        or data.startswith("coupon_confirm&")
+    ):
+        message = get_coupon_message(data)
+
+        if message is None:
+            message = TextMessage(
+                text="優惠券功能暫時無法使用，請稍後再試。"
+            )
+
     # 3 號：附近餐廳
-    if data.startswith("nearby_restaurants&"):
+    elif data.startswith("nearby_restaurants&"):
         message = get_nearby_restaurant_message(data)
 
         if message is None:
@@ -145,13 +215,30 @@ def handle_postback_event(event, configuration):
             )
 
     # 4 號：泰雅文化語音導覽
-    # 注意：必須放在 culture_ 的判斷前面
+    # 必須放在 culture_ 的判斷前面
     elif data.startswith("culture_audio:"):
         message = get_culture_audio_reply(data)
 
         if message is None:
             message = TextMessage(
                 text="語音導覽暫時無法播放，請稍後再試。"
+            )
+
+    # 2 號：景點導覽主選單、上一頁、下一頁
+    elif data == "menu_attraction" or data.startswith("attraction_page="):
+        page = 1
+
+        if data.startswith("attraction_page="):
+            try:
+                page = int(data.split("=", 1)[1])
+            except ValueError:
+                page = 0
+
+        message = get_attraction_page_message(page)
+
+        if message is None:
+            message = TextMessage(
+                text="景點導覽暫時無法顯示，請稍後再試。"
             )
 
     # 4 號：泰雅文化選單、介紹、Quiz 與下一題
@@ -167,12 +254,6 @@ def handle_postback_event(event, configuration):
     elif data == "menu_nearby":
         message = TextMessage(
             text="請傳送你的目前位置，我幫你找附近景點！"
-        )
-
-    # 景點導覽入口
-    elif data == "menu_attraction":
-        message = TextMessage(
-            text="景點導覽功能準備中"
         )
 
     # AI 問答入口

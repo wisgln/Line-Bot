@@ -41,7 +41,7 @@ if __name__ == "__main__":
         ("culture_quiz:quiz001:B", FlexMessage),
         ("culture_quiz_next:quiz002", FlexMessage),
         ("menu_nearby", TextMessage),
-        ("menu_attraction", TextMessage),
+        ("menu_attraction", FlexMessage),
         ("menu_ai", TextMessage),
     ]
 

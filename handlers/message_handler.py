@@ -1,4 +1,4 @@
-"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
+﻿"""處理文字訊息，整合 AI、景點字卡與文化功能。"""
 
 import logging
 import re
@@ -68,11 +68,11 @@ def get_attraction_message():
             create_attraction_carousel,
         )
 
-        attractions = get_all_attractions()[:12]
+        attractions = get_all_attractions()
         if not attractions:
             return None
 
-        carousel = create_attraction_carousel(attractions)
+        carousel = create_attraction_carousel(attractions, page=1)
 
         return FlexMessage(
             alt_text="復興區景點導覽",
@@ -352,7 +352,7 @@ def get_itinerary_message(text, session_id):
 
 
 def get_travel_assistant_message():
-    """旅遊助手：天氣、交通、緊急聯絡、農特產、商家合作、AI 問答的入口。"""
+    """旅遊助手：天氣、交通、緊急聯絡、農特產、優惠券、AI 問答的入口。"""
     items = [
         QuickReplyItem(action=MessageAction(label="🌤 天氣", text="天氣")),
         QuickReplyItem(action=MessageAction(label="🚌 交通", text="交通")),
@@ -360,9 +360,7 @@ def get_travel_assistant_message():
             action=MessageAction(label="🚨 緊急聯絡", text="緊急聯絡")
         ),
         QuickReplyItem(action=MessageAction(label="🌾 農特產", text="農特產")),
-        QuickReplyItem(
-            action=MessageAction(label="🤝 商家合作", text="商家合作")
-        ),
+        QuickReplyItem(action=MessageAction(label="🎟 優惠券", text="優惠券")),
         QuickReplyItem(action=MessageAction(label="🤖 AI 問答", text="AI 問答")),
     ]
 
@@ -403,18 +401,35 @@ def get_food_stay_message():
 
 
 def get_partner_message():
-    """商家合作：餐廳、民宿、農特產；優惠券做好後再加入。"""
+    """商家合作：餐廳、民宿、農特產與專題示範優惠券。"""
     items = [
         QuickReplyItem(action=MessageAction(label="🍜 餐廳", text="餐廳")),
         QuickReplyItem(action=MessageAction(label="🏡 民宿", text="民宿")),
         QuickReplyItem(action=MessageAction(label="🌾 農特產", text="農特產")),
+        QuickReplyItem(action=MessageAction(label="🎟 優惠券", text="優惠券")),
     ]
 
     return TextMessage(
-        text="🤝 商家合作\n想看哪一類合作商家？",
+        text=(
+            "🤝 商家合作\n"
+            "想看哪一類內容？\n"
+            "※ 優惠券目前為學生專題示範，不可於實體店家折抵。"
+        ),
         quick_reply=QuickReply(items=items),
     )
 
+
+def get_coupon_message():
+    """優惠券專區入口。"""
+    try:
+        from modules.coupon.coupon_postback import create_coupon_list_message
+
+        return create_coupon_list_message()
+    except Exception:
+        logger.exception("Coupon menu failed")
+        return TextMessage(
+            text="🎟️ 優惠券資料暫時無法顯示，請稍後再試。"
+        )
 
 def get_session_id(event):
     """區分私人、群組、聊天室及使用者。"""
@@ -497,6 +512,12 @@ def handle_text_message(event, configuration):
     elif text == "商家合作":
         messages = [get_partner_message()]
 
+    elif (
+        ("優惠券" in text or "折價券" in text)
+        and not any(word in text for word in ("安排行程", "幫我排", "行程", "第二站"))
+    ):
+        messages = [get_coupon_message()]
+
     elif text == "AI 問答":
         messages = [
             TextMessage(
@@ -528,3 +549,4 @@ def handle_text_message(event, configuration):
                 messages=messages,
             )
         )
+
