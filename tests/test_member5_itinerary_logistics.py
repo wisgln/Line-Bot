@@ -78,6 +78,28 @@ class ItineraryLogisticsTests(unittest.TestCase):
         )
         self.assertEqual(result[1]["time"], "第1天夜間")
 
+    def test_repeated_restaurant_is_replaced_but_lodging_may_repeat(self):
+        context = {
+            "merchants.json": [
+                {"name": "山景餐廳", "category": "餐廳"},
+                {"name": "溪谷餐廳", "category": "餐廳"},
+                {"name": "森林民宿", "category": "民宿"},
+            ]
+        }
+        stops = [
+            {"kind": "other", "name": "山景餐廳", "time": "第1天中午", "note": ""},
+            {"kind": "other", "name": "山景餐廳", "time": "第1天晚上", "note": ""},
+            {"kind": "other", "name": "森林民宿", "time": "第1天夜間", "note": ""},
+            {"kind": "other", "name": "森林民宿", "time": "第2天夜間", "note": ""},
+        ]
+
+        result = _normalize_unknown_arrangements(stops, context)
+
+        self.assertEqual(result[0]["name"], "山景餐廳")
+        self.assertEqual(result[1]["name"], "溪谷餐廳")
+        self.assertEqual(result[2]["name"], "森林民宿")
+        self.assertEqual(result[3]["name"], "森林民宿")
+
     def test_unknown_other_attraction_is_not_silently_allowed(self):
         stops = [
             {"kind": "other", "name": "不存在的景點", "time": "第1天上午", "note": ""},
@@ -152,6 +174,14 @@ class ItineraryLogisticsTests(unittest.TestCase):
         categories = {item["category"] for item in result["merchants.json"]}
 
         self.assertEqual(categories, {"餐廳", "民宿"})
+        self.assertGreaterEqual(
+            len([
+                item
+                for item in result["merchants.json"]
+                if item["category"] == "餐廳"
+            ]),
+            3,
+        )
 
 
 if __name__ == "__main__":

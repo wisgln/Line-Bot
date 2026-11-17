@@ -143,21 +143,33 @@ def small_context(context, text):
 
     merchant_group = result.get("merchants.json", [])
 
-    # 多日行程先交錯餐廳與民宿，避免小型上下文只留下單一類別。
-    if any(word in text for word in ("兩天", "二天", "三天", "四天", "過夜", "住宿")):
+    multi_day = any(
+        word in text
+        for word in ("兩天", "二天", "三天", "四天", "過夜", "住宿")
+    )
+    days = 1
+    for phrase, value in (("兩天", 2), ("二天", 2), ("三天", 3), ("四天", 4)):
+        if phrase in text:
+            days = value
+            break
+    if multi_day and days == 1:
+        days = 2
+
+    # 多日行程預留每餐不同的餐廳候選，以及每晚至少一個民宿候選。
+    if multi_day:
         buckets = {
             "餐廳": [item for item in merchant_group if item.get("category") == "餐廳"],
             "民宿": [item for item in merchant_group if item.get("category") == "民宿"],
         }
-        balanced = []
-        maximum = max((len(items) for items in buckets.values()), default=0)
-        for index in range(maximum):
-            for category in ("餐廳", "民宿"):
-                if index < len(buckets[category]):
-                    balanced.append(buckets[category][index])
+        meal_count = days * 2 - 1
+        night_count = days - 1
+        balanced = (
+            buckets["餐廳"][:meal_count]
+            + buckets["民宿"][:night_count]
+        )
         balanced.extend(
             item for item in merchant_group
-            if item.get("category") not in buckets
+            if item not in balanced
         )
         merchant_group = balanced
 
@@ -166,10 +178,11 @@ def small_context(context, text):
         merchant_group,
     ]
 
-    # 新增候選總計最多5筆。
+    # 一般問題最多5筆；多日行程額外保留足夠的不重複餐宿候選。
     # 舊站點另外保留，供行程修改及資料驗證使用。
     kept = [[], []]
     fresh = 0
+    fresh_limit = 2 * (days * 3 - 2) if multi_day else 5
 
     maximum = max(
         (len(group) for group in groups),
@@ -191,7 +204,7 @@ def small_context(context, text):
                 or item.get("name") in names
             )
 
-            if pinned or fresh < 5:
+            if pinned or fresh < fresh_limit:
                 kept[group_index].append(item)
 
                 if not pinned:

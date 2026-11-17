@@ -37,6 +37,7 @@ PROMPT = """
 每一天直接安排午餐；每個過夜日直接安排晚餐與住宿。
 優先使用參考資料中的餐廳與民宿；候選不足時才使用
 「午餐安排」「晚餐安排」「住宿安排」，並提醒仍需確認訂位或空房。
+同一份行程中的餐廳不可重複；民宿可依路線、天數及候選狀況重複。
 依資料中的地區、地址及已知路線把相近站點排在同一天，
 避免明顯來回折返；資料不足時不得宣稱是最短或最佳路線。
 使用者已給天數、交通方式與主要地區時，直接產生草案，
@@ -303,6 +304,20 @@ def _ensure_overnight_basics(raw_stops, text, context):
     lodgings = [item["name"] for item in merchants if item.get("category") == "民宿"]
 
     additions = []
+    used_restaurants = {
+        stop.get("name")
+        for stop in result
+        if isinstance(stop, dict) and stop.get("name") in restaurants
+    }
+
+    def next_restaurant(fallback):
+        name = next(
+            (candidate for candidate in restaurants if candidate not in used_restaurants),
+            fallback,
+        )
+        if name in restaurants:
+            used_restaurants.add(name)
+        return name
 
     def has_period(day, periods, categories, generic_names):
         for stop in result + additions:
@@ -321,12 +336,12 @@ def _ensure_overnight_basics(raw_stops, text, context):
         prefix = f"第{day}天"
 
         if not has_period(day, ("中午",), set(restaurants), {"午餐安排"}):
-            name = restaurants[(day - 1) % len(restaurants)] if restaurants else "午餐安排"
+            name = next_restaurant("午餐安排")
             additions.append({"kind": "other", "name": name, "time": prefix + "中午", "note": ""})
 
         if day < days:
             if not has_period(day, ("傍晚", "晚上"), set(restaurants), {"晚餐安排"}):
-                name = restaurants[day % len(restaurants)] if restaurants else "晚餐安排"
+                name = next_restaurant("晚餐安排")
                 additions.append({"kind": "other", "name": name, "time": prefix + "晚上", "note": ""})
 
             if not has_period(day, ("晚上", "夜間"), set(lodgings), {"住宿安排"}):
@@ -371,6 +386,17 @@ def _normalize_unknown_arrangements(raw_stops, context):
     restaurants = [item["name"] for item in known_items if item.get("category") == "餐廳"]
     lodgings = [item["name"] for item in known_items if item.get("category") == "民宿"]
     generic = {"午餐安排", "晚餐安排", "住宿安排", "休息", "自備便當"}
+    used_restaurants = set()
+
+    def meal_name(label, *, dinner=False):
+        candidates = reversed(restaurants) if dinner else restaurants
+        name = next(
+            (candidate for candidate in candidates if candidate not in used_restaurants),
+            "晚餐安排" if dinner else "午餐安排",
+        )
+        if name in restaurants:
+            used_restaurants.add(name)
+        return name
 
     for stop in result:
         if not isinstance(stop, dict) or stop.get("kind") != "other":
@@ -379,11 +405,24 @@ def _normalize_unknown_arrangements(raw_stops, context):
         name = stop.get("name")
         label = stop.get("time", "")
 
-        if name in known or name in generic or not isinstance(label, str):
+        if not isinstance(label, str):
+            continue
+
+        if name in restaurants:
+            if name in used_restaurants:
+                stop["name"] = meal_name(
+                    label,
+                    dinner=any(period in label for period in ("傍晚", "晚上")),
+                )
+            else:
+                used_restaurants.add(name)
+            continue
+
+        if name in known or name in generic:
             continue
 
         if "中午" in label:
-            stop["name"] = restaurants[0] if restaurants else "午餐安排"
+            stop["name"] = meal_name(label)
         elif "夜間" in label or (
             isinstance(name, str)
             and any(word in name for word in ("住宿", "民宿", "旅館", "飯店", "夜宿"))
@@ -392,7 +431,7 @@ def _normalize_unknown_arrangements(raw_stops, context):
             day = re.match(r"第[1-7一二三四五六七]天", label)
             stop["time"] = (day.group(0) if day else "") + "夜間"
         elif any(period in label for period in ("傍晚", "晚上")):
-            stop["name"] = restaurants[-1] if restaurants else "晚餐安排"
+            stop["name"] = meal_name(label, dinner=True)
 
     return result
 
