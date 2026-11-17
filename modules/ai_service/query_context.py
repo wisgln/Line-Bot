@@ -141,9 +141,29 @@ def small_context(context, text):
         for stop in plan
     }
 
+    merchant_group = result.get("merchants.json", [])
+
+    # 多日行程先交錯餐廳與民宿，避免小型上下文只留下單一類別。
+    if any(word in text for word in ("兩天", "二天", "三天", "四天", "過夜", "住宿")):
+        buckets = {
+            "餐廳": [item for item in merchant_group if item.get("category") == "餐廳"],
+            "民宿": [item for item in merchant_group if item.get("category") == "民宿"],
+        }
+        balanced = []
+        maximum = max((len(items) for items in buckets.values()), default=0)
+        for index in range(maximum):
+            for category in ("餐廳", "民宿"):
+                if index < len(buckets[category]):
+                    balanced.append(buckets[category][index])
+        balanced.extend(
+            item for item in merchant_group
+            if item.get("category") not in buckets
+        )
+        merchant_group = balanced
+
     groups = [
         result.get("attractions", {}).get("items", []),
-        result.get("merchants.json", []),
+        merchant_group,
     ]
 
     # 新增候選總計最多5筆。
