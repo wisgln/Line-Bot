@@ -5,6 +5,7 @@ import json
 import os
 import re
 import time
+from urllib.parse import urlencode
 
 
 PROMPT = """
@@ -42,6 +43,15 @@ PROMPT = """
 根據歷史保留同行者、出發地、預算、步行限制和禁止事項；
 指涉不清先詢問。
 一日遊通常2至3個景點加午餐；多日可分天，最多12站。
+只要行程包含過夜，不需另外詢問餐飲或住宿偏好：
+每一天直接安排午餐；每個過夜日直接安排晚餐與住宿。
+優先使用參考資料中的餐廳與民宿；候選不足時才使用
+「午餐安排」「晚餐安排」「住宿安排」，並提醒仍需確認訂位或空房。
+同一份行程中的餐廳不可重複；民宿可依路線、天數及候選狀況重複。
+依資料中的地區、地址及已知路線把相近站點排在同一天，
+避免明顯來回折返；資料不足時不得宣稱是最短或最佳路線。
+使用者已給天數、交通方式與主要地區時，直接產生草案，
+不要為餐廳、民宿或一般偏好重複追問。
 指定地區時只新增area_match不是false的景點或商家。
 資料不足就少排。
 修改只動使用者要求的部分。
@@ -260,8 +270,197 @@ def _prepare_stops(raw_stops, text, previous):
     return result
 
 
+def _day_number(label):
+    if not isinstance(label, str):
+        return 1
+
+    match = re.match(r"第([1-7一二三四五六七])天", label)
+
+    if not match:
+        return 1
+
+    value = match[1]
+    return int(value) if value.isdigit() else "一二三四五六七".index(value) + 1
+
+
+def _requested_days(text, stops):
+    matches = [_day_number(stop.get("time")) for stop in stops if isinstance(stop, dict)]
+    days = max(matches, default=1)
+
+    explicit = {
+        "兩天一夜": 2,
+        "二天一夜": 2,
+        "三天兩夜": 3,
+        "四天三夜": 4,
+    }
+
+    for phrase, value in explicit.items():
+        if phrase in text:
+            days = max(days, value)
+
+    if any(word in text for word in ("過夜", "安排住宿")):
+        days = max(days, 2)
+
+    return days
+
+
+def _ensure_overnight_basics(raw_stops, text, context):
+    """多日草案自動補齊餐食與住宿，避免重複追問。"""
+    if not isinstance(raw_stops, list):
+        return raw_stops
+
+    result = copy.deepcopy(raw_stops)
+    days = _requested_days(text, result)
+
+    if days < 2:
+        return result
+
+    merchants = [
+        item
+        for item in context.get("merchants.json", [])
+        if isinstance(item, dict) and isinstance(item.get("name"), str)
+    ]
+    restaurants = [item["name"] for item in merchants if item.get("category") == "餐廳"]
+    lodgings = [item["name"] for item in merchants if item.get("category") == "民宿"]
+
+    additions = []
+    used_restaurants = {
+        stop.get("name")
+        for stop in result
+        if isinstance(stop, dict) and stop.get("name") in restaurants
+    }
+
+    def next_restaurant(fallback):
+        name = next(
+            (candidate for candidate in restaurants if candidate not in used_restaurants),
+            fallback,
+        )
+        if name in restaurants:
+            used_restaurants.add(name)
+        return name
+
+    def has_period(day, periods, categories, generic_names):
+        for stop in result + additions:
+            if not isinstance(stop, dict) or _day_number(stop.get("time")) != day:
+                continue
+            name = stop.get("name", "")
+            label = stop.get("time", "")
+            if any(period in label for period in periods) and (
+                name in categories
+                or name in generic_names
+            ):
+                return True
+        return False
+
+    for day in range(1, days + 1):
+        prefix = f"第{day}天"
+
+        if not has_period(day, ("中午",), set(restaurants), {"午餐安排"}):
+            name = next_restaurant("午餐安排")
+            additions.append({"kind": "other", "name": name, "time": prefix + "中午", "note": ""})
+
+        if day < days:
+            if not has_period(day, ("傍晚", "晚上"), set(restaurants), {"晚餐安排"}):
+                name = next_restaurant("晚餐安排")
+                additions.append({"kind": "other", "name": name, "time": prefix + "晚上", "note": ""})
+
+            if not has_period(day, ("晚上", "夜間"), set(lodgings), {"住宿安排"}):
+                name = lodgings[(day - 1) % len(lodgings)] if lodgings else "住宿安排"
+                additions.append({"kind": "other", "name": name, "time": prefix + "夜間", "note": ""})
+
+    # 餐食與住宿優先保留；超過訊息上限時從最後一個景點開始縮減。
+    while len(result) + len(additions) > 12:
+        index = next(
+            (i for i in range(len(result) - 1, -1, -1) if result[i].get("kind") == "attraction"),
+            None,
+        )
+        if index is None:
+            break
+        result.pop(index)
+
+    period_order = {
+        "清晨": 0, "早上": 1, "上午": 1, "中午": 2,
+        "下午": 3, "傍晚": 4, "晚上": 5, "夜間": 6,
+    }
+
+    def order(stop):
+        label = stop.get("time", "")
+        period = next((key for key in period_order if key in label), "夜間")
+        return (_day_number(label), period_order[period])
+
+    return sorted(result + additions, key=order)
+
+
+def _normalize_unknown_arrangements(raw_stops, context):
+    """把 AI 未收錄的餐宿名稱降級成安全通用安排，不放行虛構店家。"""
+    if not isinstance(raw_stops, list):
+        return raw_stops
+
+    result = copy.deepcopy(raw_stops)
+    known_items = [
+        item
+        for item in context.get("merchants.json", [])
+        if isinstance(item, dict) and isinstance(item.get("name"), str)
+    ]
+    known = {item["name"] for item in known_items}
+    restaurants = [item["name"] for item in known_items if item.get("category") == "餐廳"]
+    lodgings = [item["name"] for item in known_items if item.get("category") == "民宿"]
+    generic = {"午餐安排", "晚餐安排", "住宿安排", "休息", "自備便當"}
+    used_restaurants = set()
+
+    def meal_name(label, *, dinner=False):
+        candidates = reversed(restaurants) if dinner else restaurants
+        name = next(
+            (candidate for candidate in candidates if candidate not in used_restaurants),
+            "晚餐安排" if dinner else "午餐安排",
+        )
+        if name in restaurants:
+            used_restaurants.add(name)
+        return name
+
+    for stop in result:
+        if not isinstance(stop, dict) or stop.get("kind") != "other":
+            continue
+
+        name = stop.get("name")
+        label = stop.get("time", "")
+
+        if not isinstance(label, str):
+            continue
+
+        if name in restaurants:
+            if name in used_restaurants:
+                stop["name"] = meal_name(
+                    label,
+                    dinner=any(period in label for period in ("傍晚", "晚上")),
+                )
+            else:
+                used_restaurants.add(name)
+            continue
+
+        if name in known or name in generic:
+            continue
+
+        if "中午" in label:
+            stop["name"] = meal_name(label)
+        elif "夜間" in label or (
+            isinstance(name, str)
+            and any(word in name for word in ("住宿", "民宿", "旅館", "飯店", "夜宿"))
+        ):
+            stop["name"] = lodgings[0] if lodgings else "住宿安排"
+            day = re.match(r"第[1-7一二三四五六七]天", label)
+            stop["time"] = (day.group(0) if day else "") + "夜間"
+        elif any(period in label for period in ("傍晚", "晚上")):
+            stop["name"] = meal_name(label, dinner=True)
+
+    return result
+
+
 def _validate(core, raw_stops, context, text):
     raw_stops = _prepare_stops(raw_stops, text, context.get("current_plan", []))
+    raw_stops = _normalize_unknown_arrangements(raw_stops, context)
+    if not context.get("current_plan"):
+        raw_stops = _ensure_overnight_basics(raw_stops, text, context)
     _, stops = core.decode_plan(
         json.dumps(
             {
@@ -451,6 +650,88 @@ def _render(stops):
     return "\n".join(lines)
 
 
+def _history_texts(history):
+    values = []
+    for entry in history:
+        if entry.get("role") != "user":
+            continue
+        values.extend(
+            part.get("text", "")
+            for part in entry.get("parts", [])
+            if isinstance(part.get("text"), str)
+        )
+    return values
+
+
+def _departure(text, history):
+    for value in [text] + list(reversed(_history_texts(history))):
+        for pattern in (
+            r"從([^，。,.\n]{2,30}?)(?:出發|搭車|搭公車|開車)",
+            r"出發地(?:是|為|：|:)?\s*([^，。,.\n]{2,30})",
+        ):
+            match = re.search(pattern, value)
+            if match:
+                return match[1].strip()
+    return None
+
+
+def _plan_traffic_reply(stops, text, history=()):
+    """依保存的站次輸出逐段交通入口，不要求重複提供目的地。"""
+    if not stops:
+        return "目前還沒有已保存的行程，請先建立行程，我就能依站次整理交通。"
+
+    mode = "driving" if "開車" in text else "transit"
+    mode_name = "開車" if mode == "driving" else "大眾運輸"
+    departure = _departure(text, history)
+    names = [stop.get("name") for stop in stops if isinstance(stop.get("name"), str)]
+    generic = {"午餐安排", "晚餐安排", "住宿安排", "休息"}
+    lines = [f"🚌 依照目前行程整理｜{mode_name}", ""]
+
+    def destination_query(name):
+        return name if name.startswith("桃園市") else "桃園市復興區" + name
+
+    plan_points = [(name, destination_query(name)) for name in names]
+
+    if departure:
+        points = [(departure, departure)] + plan_points
+    else:
+        points = plan_points
+        lines.extend([
+            "尚未指定出發地，先列出行程各站之間的搭乘順序；第一段可在地圖中輸入實際出發地。",
+            "",
+        ])
+
+    if len(points) == 1:
+        destination, destination_value = points[0]
+        url = "https://www.google.com/maps/dir/?" + urlencode({
+            "api": 1, "destination": destination_value, "travelmode": mode,
+        })
+        lines.extend([f"📍 目的地｜{destination}", url])
+    else:
+        for number, (origin_point, destination_point) in enumerate(zip(points, points[1:]), 1):
+            origin, origin_value = origin_point
+            destination, destination_value = destination_point
+            lines.append(f"第{number}段｜{origin} → {destination}")
+            if origin in generic or destination in generic:
+                lines.append("這一站尚未選定實際店家，確定餐廳或民宿後才能產生精確導航。")
+            else:
+                url = "https://www.google.com/maps/dir/?" + urlencode({
+                    "api": 1,
+                    "origin": origin_value,
+                    "destination": destination_value,
+                    "travelmode": mode,
+                })
+                lines.extend(["Google Maps 路線：", url])
+            lines.append("")
+
+    lines.extend([
+        "🕒 桃園公車班次與到站時間：",
+        "https://ebus.tycg.gov.tw/ebus",
+        "班次與轉乘以出發當日官方資訊為準。",
+    ])
+    return "\n".join(lines)
+
+
 def get_groq_reply(text, *, session_id=None):
     """Run the selected structured AI provider while preserving old imports."""
     from . import gemini_reply as core
@@ -524,6 +805,14 @@ def get_groq_reply(text, *, session_id=None):
         )
 
         if traffic and not edit:
+            itinerary_request = previous and any(
+                word in text
+                for word in ("行程", "按照", "依照", "照著", "各站", "每一站", "逐段")
+            )
+
+            if itinerary_request:
+                return finish(_plan_traffic_reply(previous, text, history))
+
             query = text
 
             match = re.search(

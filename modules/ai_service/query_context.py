@@ -141,15 +141,48 @@ def small_context(context, text):
         for stop in plan
     }
 
+    merchant_group = result.get("merchants.json", [])
+
+    multi_day = any(
+        word in text
+        for word in ("兩天", "二天", "三天", "四天", "過夜", "住宿")
+    )
+    days = 1
+    for phrase, value in (("兩天", 2), ("二天", 2), ("三天", 3), ("四天", 4)):
+        if phrase in text:
+            days = value
+            break
+    if multi_day and days == 1:
+        days = 2
+
+    # 多日行程預留每餐不同的餐廳候選，以及每晚至少一個民宿候選。
+    if multi_day:
+        buckets = {
+            "餐廳": [item for item in merchant_group if item.get("category") == "餐廳"],
+            "民宿": [item for item in merchant_group if item.get("category") == "民宿"],
+        }
+        meal_count = days * 2 - 1
+        night_count = days - 1
+        balanced = (
+            buckets["餐廳"][:meal_count]
+            + buckets["民宿"][:night_count]
+        )
+        balanced.extend(
+            item for item in merchant_group
+            if item not in balanced
+        )
+        merchant_group = balanced
+
     groups = [
         result.get("attractions", {}).get("items", []),
-        result.get("merchants.json", []),
+        merchant_group,
     ]
 
-    # 新增候選總計最多5筆。
+    # 一般問題最多5筆；多日行程額外保留足夠的不重複餐宿候選。
     # 舊站點另外保留，供行程修改及資料驗證使用。
     kept = [[], []]
     fresh = 0
+    fresh_limit = 2 * (days * 3 - 2) if multi_day else 5
 
     maximum = max(
         (len(group) for group in groups),
@@ -171,7 +204,7 @@ def small_context(context, text):
                 or item.get("name") in names
             )
 
-            if pinned or fresh < 5:
+            if pinned or fresh < fresh_limit:
                 kept[group_index].append(item)
 
                 if not pinned:
