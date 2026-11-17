@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from modules.ai_service.groq_reply import (
     _ensure_overnight_basics,
+    _normalize_unknown_arrangements,
     _plan_traffic_reply,
     get_groq_reply,
 )
@@ -40,6 +41,51 @@ class ItineraryLogisticsTests(unittest.TestCase):
         self.assertEqual(len([stop for stop in result if "中午" in stop["time"]]), 2)
         self.assertEqual(len([stop for stop in result if "晚上" in stop["time"]]), 1)
         self.assertEqual(len([stop for stop in result if "夜間" in stop["time"]]), 1)
+
+    def test_unknown_meal_and_lodging_names_become_safe_arrangements(self):
+        stops = [
+            {"kind": "other", "name": "AI 猜的午餐店", "time": "第1天中午", "note": ""},
+            {"kind": "other", "name": "AI 猜的晚餐店", "time": "第1天晚上", "note": ""},
+            {"kind": "other", "name": "AI 猜的民宿", "time": "第1天夜間", "note": ""},
+        ]
+
+        result = _normalize_unknown_arrangements(stops, {"merchants.json": []})
+
+        self.assertEqual(
+            [stop["name"] for stop in result],
+            ["午餐安排", "晚餐安排", "住宿安排"],
+        )
+
+    def test_unknown_meal_and_lodging_use_real_context_candidates(self):
+        context = {
+            "merchants.json": [
+                {"name": "山景餐廳", "category": "餐廳"},
+                {"name": "溪谷餐廳", "category": "餐廳"},
+                {"name": "森林民宿", "category": "民宿"},
+            ]
+        }
+        stops = [
+            {"kind": "other", "name": "AI 猜的午餐店", "time": "第1天中午", "note": ""},
+            {"kind": "other", "name": "AI 猜的民宿", "time": "第1天晚上", "note": ""},
+            {"kind": "other", "name": "AI 猜的晚餐店", "time": "第1天晚上", "note": ""},
+        ]
+
+        result = _normalize_unknown_arrangements(stops, context)
+
+        self.assertEqual(
+            [stop["name"] for stop in result],
+            ["山景餐廳", "森林民宿", "溪谷餐廳"],
+        )
+        self.assertEqual(result[1]["time"], "第1天夜間")
+
+    def test_unknown_other_attraction_is_not_silently_allowed(self):
+        stops = [
+            {"kind": "other", "name": "不存在的景點", "time": "第1天上午", "note": ""},
+        ]
+
+        result = _normalize_unknown_arrangements(stops, {"merchants.json": []})
+
+        self.assertEqual(result[0]["name"], "不存在的景點")
 
     def test_day_trip_does_not_force_lodging(self):
         stops = [{"kind": "attraction", "id": "1", "time": "上午", "note": ""}]

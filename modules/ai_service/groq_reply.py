@@ -356,8 +356,50 @@ def _ensure_overnight_basics(raw_stops, text, context):
     return sorted(result + additions, key=order)
 
 
+def _normalize_unknown_arrangements(raw_stops, context):
+    """把 AI 未收錄的餐宿名稱降級成安全通用安排，不放行虛構店家。"""
+    if not isinstance(raw_stops, list):
+        return raw_stops
+
+    result = copy.deepcopy(raw_stops)
+    known_items = [
+        item
+        for item in context.get("merchants.json", [])
+        if isinstance(item, dict) and isinstance(item.get("name"), str)
+    ]
+    known = {item["name"] for item in known_items}
+    restaurants = [item["name"] for item in known_items if item.get("category") == "餐廳"]
+    lodgings = [item["name"] for item in known_items if item.get("category") == "民宿"]
+    generic = {"午餐安排", "晚餐安排", "住宿安排", "休息", "自備便當"}
+
+    for stop in result:
+        if not isinstance(stop, dict) or stop.get("kind") != "other":
+            continue
+
+        name = stop.get("name")
+        label = stop.get("time", "")
+
+        if name in known or name in generic or not isinstance(label, str):
+            continue
+
+        if "中午" in label:
+            stop["name"] = restaurants[0] if restaurants else "午餐安排"
+        elif "夜間" in label or (
+            isinstance(name, str)
+            and any(word in name for word in ("住宿", "民宿", "旅館", "飯店", "夜宿"))
+        ):
+            stop["name"] = lodgings[0] if lodgings else "住宿安排"
+            day = re.match(r"第[1-7一二三四五六七]天", label)
+            stop["time"] = (day.group(0) if day else "") + "夜間"
+        elif any(period in label for period in ("傍晚", "晚上")):
+            stop["name"] = restaurants[-1] if restaurants else "晚餐安排"
+
+    return result
+
+
 def _validate(core, raw_stops, context, text):
     raw_stops = _prepare_stops(raw_stops, text, context.get("current_plan", []))
+    raw_stops = _normalize_unknown_arrangements(raw_stops, context)
     if not context.get("current_plan"):
         raw_stops = _ensure_overnight_basics(raw_stops, text, context)
     _, stops = core.decode_plan(
